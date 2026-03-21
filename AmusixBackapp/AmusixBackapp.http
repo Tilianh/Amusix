@@ -1,0 +1,6 @@
+@AmusixBackapp_HostAddress = http://localhost:5211
+
+GET {{AmusixBackapp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
