@@ -1,0 +1,12 @@
+{
+  "name": "amusix-testapp",
+  "license": "ISC",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress run"
+  },
+  "dependencies": {
+    "cypress": "^15.12.0"
+  }
+}

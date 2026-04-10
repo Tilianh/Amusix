@@ -1,0 +1,23 @@
+= Amusix
+:toc: macro
+:toclevels: 5
+:sectnums:
+
+Welcome to Amusix's GitHub repository. Here you'll find everything you need to know about the application's code and how you can contribute to improve it!
+
+toc::[]
+
+== What is Amusix?
+
+Amusix in an application powered by the YouTube API to listen to and share music playlists with your friends.
+
+It is based on .NET 10 and Angular 21.
+
+== Code structure
+
+* `AmusixBackapp`: backend application
+** Based on .NET 10
+* `AmusixFrontapp`: frontend application
+** Based on Node 24 and Angular 21
+* `AmusixTestapp`: test application
+** Based on Node 24 and Cypress 15

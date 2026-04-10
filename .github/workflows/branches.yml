@@ -1,0 +1,31 @@
+name: Ensure branch strategy
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+
+  check_branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ▶ Check branches
+        if: github.base_ref == 'main' && github.head_ref != 'release'
+        run: |
+          echo "Only a 'release' branch can be merged into 'main' from a pull request."
+          exit 1
+
+# TODO: launch app in Docker containers + launch cypress tests (on frontend and backend)
+#  test:
+#    needs: check_branches
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: ▶ Launch Cypress tests (on frontend and backend)
+#        uses: cypress-io/github-action@v4
+#        with:
+#          start:
+#          wait-on: http://localhost:
+#          browser: edge
+#          spec:

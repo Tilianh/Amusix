@@ -1,0 +1,3 @@
+= Code of conduct
+
+Defines standards for how to engage in a community.

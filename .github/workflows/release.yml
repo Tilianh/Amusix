@@ -1,0 +1,85 @@
+name: Release new app version
+
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  PACKAGE_JSON_PATH: ${{ vars.PACKAGE_JSON_PATH }}
+
+jobs:
+
+# TODO: generate and deploy frontend (+ backend?) doc on GitHub Pages?
+#  generate_doc:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: ▶ Create GitHub Pages artifact
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          name: github-pages
+#          path: client/dist/todolist/browser
+#      - name: ▶ Deploy GitHub Pages artifact
+#        id: deployment
+#        uses: actions/deploy-pages@v4
+
+# TODO: build and push Docker images to Docker Hub?
+#  push_docker_images:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: ▶ Build and push Docker images to Docker Hub
+#        run: |
+#          docker build -t ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }} .
+#          docker tag ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }} ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:latest
+#          echo "${{ env.DOCKER_PASSWORD }}" | docker login -u "${{ env.DOCKER_USER }}" --password-stdin
+#          docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }}
+#          docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:latest
+
+# TODO: deploy app on server?
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: ▶ Download build artifact
+#        uses: actions/download-artifact@master
+#        with:
+#          name:
+#          path:
+#      - name: ▶ Deploying build using SSH
+#        uses: easingthemes/ssh-deploy@main
+#        with:
+#          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
+#          REMOTE_HOST: ${{ env.REMOTE_HOST }}
+#          REMOTE_USER: ${{ env.REMOTE_USER }}
+#          SOURCE:
+#          TARGET: ${{ env.SERVER_DEPLOY_PATH }}
+#          SCRIPT_BEFORE: rm -fr ${{ env.SERVER_DEPLOY_PATH }}/* ${{ env.SERVER_DEPLOY_PATH }}/\.[^\.]*
+
+  draft-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ▶ Extract release name
+        id: version
+        run: |
+          VERSION=$(node -p "require('${{ env.PACKAGE_JSON_PATH }}/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: ▶ Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: ▶ Create and push tag
+        run: |
+          git tag -a "v${{ steps.version.outputs.version }}" \
+            -m "Release v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
+      - name: Draft GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GitHub Actions
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            --title "Release v${{ steps.version.outputs.version }}" \
+            --generate-notes \
+            --draft \
+            --latest

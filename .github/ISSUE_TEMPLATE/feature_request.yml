@@ -1,0 +1,45 @@
+name: Feature request
+description: Request a new feature for Amusix.
+title: "[Feature] "
+labels: [ "Feature request" ]
+#projects: [ "Tilianh/5" ]
+type: feature
+body:
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Explain your vision
+      description: Describe the new feature you would like to see in Amusix.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: How difficult do you think this feature would be to implement?
+      multiple: false
+      options:
+        - Easy
+        - Medium
+        - Hard
+    validations:
+      required: true
+
+  - type: upload
+    id: pics
+    attributes:
+      label: Upload pictures
+      description: Add some pictures and mockups of what you have in mind (optional).
+    validations:
+      required: false
+
+  # TODO: add ref to repo code of conduct
+#  - type: checkboxes
+#    id: terms
+#    attributes:
+#      label: Code of conduct
+#      description: By submitting this issue, you agree to follow our [code of conduct](https://example.com).
+#      options:
+#        - label: I agree to follow this project's code of conduct
+#          required: true

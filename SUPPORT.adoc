@@ -1,0 +1,3 @@
+= Support
+
+Lets people know about ways to get help with your project.
