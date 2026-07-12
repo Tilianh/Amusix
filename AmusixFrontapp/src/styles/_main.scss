@@ -1,0 +1,54 @@
+@use "sass:map";
+
+// ---------- Config ----------
+
+$enable-negative-margins: true;
+
+$primary: #f20202; //#ff0033
+
+$theme-colors: map.merge($theme-colors, (
+  "primary": $primary,
+));
+
+
+// ---------- Overriding ----------
+
+* {
+  font-family: Roboto, "Arial", sans-serif;
+}
+
+a {
+  color: #065fd4;
+  text-decoration: none !important;
+}
+
+.btn-primary {
+  color: white !important;
+}
+
+.btn-outline-primary {
+  color: $primary !important;
+  &:hover, &.active {
+    color: white !important;
+  }
+}
+
+$input-focus-border-color: initial;
+$input-focus-box-shadow: none;
+
+
+// ---------- Custom ----------
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+@each $n in (1, 2, 3, 4, 5) {
+  .line-truncate-#{$n} {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: initial;
+    -webkit-line-clamp: $n;
+  }
+}

@@ -1,0 +1,16 @@
+@if (isVisible()) {
+  <div class="position-absolute start-50 bottom-0 translate-middle-x z-3 px-2"
+       [class.w-100]="isPhoneScreen()">
+    <div class="alert alert-dismissible show"
+         role="alert"
+         [class.show]="isVisible()"
+         [class.alert-light]="alertInfo().type == AlertType.DEFAULT"
+         [class.alert-info]="alertInfo().type == AlertType.INFO"
+         [class.alert-success]="alertInfo().type == AlertType.SUCCESS"
+         [class.alert-warning]="alertInfo().type == AlertType.WARNING"
+         [class.alert-danger]="alertInfo().type == AlertType.ERROR">
+      <small>{{ alertInfo().text }}</small>
+      <button (click)="dismissAlert()" type="button" class="btn-close"></button>
+    </div>
+  </div>
+}

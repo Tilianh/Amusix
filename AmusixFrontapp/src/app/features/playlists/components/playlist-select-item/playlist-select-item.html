@@ -1,0 +1,21 @@
+<div (click)="this.onClicked.emit()"
+     class="playlist px-3 py-2 d-flex align-items-center gap-3 cursor-pointer"
+     [class.selected]="selected()"
+     [class.disabled]="disabled()">
+  <div
+    class="playlist-thumbnail bg-white border rounded overflow-hidden d-flex justify-content-center align-items-center">
+    @if (playlist().thumbnailUrl && !isPlaylistThumbnailNotFound()) {
+      @if (isPlaylistThumbnailLoading()) {
+        <div class="spinner-border spinner-border-sm text-primary"></div>
+      }
+      <img [ngSrc]="playlist().thumbnailUrl"
+           [alt]="`playlist${playlist().id}-image`"
+           [class.opacity-0]="isPlaylistThumbnailLoading()"
+           (load)="isPlaylistThumbnailLoading.set(false)"
+           (error)="isPlaylistThumbnailNotFound.set(true)" fill/>
+    } @else {
+      <i class="bi bi-exclamation-triangle-fill text-muted opacity-50" style="font-size: 1.5em"></i>
+    }
+  </div>
+  <div class="line-truncate-2 fw-bold" [title]="playlist().name">{{ playlist().name }}</div>
+</div>

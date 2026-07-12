@@ -19,7 +19,7 @@ jobs:
 #        uses: actions/upload-pages-artifact@v3
 #        with:
 #          name: github-pages
-#          path: client/dist/todolist/browser
+#          path: client/dist/.../browser
 #      - name: ▶ Deploy GitHub Pages artifact
 #        id: deployment
 #        uses: actions/deploy-pages@v4

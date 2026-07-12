@@ -1,0 +1,34 @@
+.song {
+  &.pc-screen {
+    transition-duration: 0.2s;
+
+    &:hover {
+      border-color: var(--bs-primary) !important;
+    }
+  }
+
+  &:hover {
+    .song-menu {
+      opacity: 1;
+    }
+  }
+
+  .song-menu {
+    opacity: 0;
+    background: linear-gradient(to right, transparent, white 15%);
+    transition-duration: 0.25s;
+  }
+
+  .song-thumbnail {
+    position: relative;
+    min-width: 85px;
+    height: 85px;
+
+    & > img {
+      -webkit-user-drag: none;
+      object-fit: cover;
+      object-position: center;
+      object-view-box: inset(13%);
+    }
+  }
+}

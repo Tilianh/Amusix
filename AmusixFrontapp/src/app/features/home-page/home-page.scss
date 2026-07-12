@@ -1,0 +1,31 @@
+.background-img {
+  object-fit: cover;
+  object-position: 67% center;
+  opacity: 0.18;
+  -webkit-user-drag: none;
+}
+
+.register-button {
+  transform: scale(1.15);
+  transition-duration: 0.2s;
+  box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), .5);
+  animation: pulse 1.25s infinite;
+  text-shadow: none;
+
+  &:hover {
+    transform: scale(1.35);
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+    animation: none;
+    text-shadow: 0 0 5px white;
+  }
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 15px rgba(var(--bs-primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0);
+  }
+}

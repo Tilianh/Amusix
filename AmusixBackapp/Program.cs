@@ -1,4 +1,8 @@
+using System.Reflection;
+using System.Threading.RateLimiting;
 using AmusixBackapp.Data;
+using AmusixBackapp.Data.Models;
+using AmusixBackapp.Shared.Classes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -6,66 +10,112 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region service registration
+
 builder.Services.AddControllers();
 
-#region database config
-
-builder.Services.AddEntityFrameworkNpgsql().AddDbContext<AppDbContext>(x =>
+// Rate limiter
+builder.Services.AddRateLimiter(options =>
 {
-    x.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+    // Each user is limited to 10 requests per minutes per route per method
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: $"{httpContext.User.Identity!.Name}-{httpContext.Request.Host}-{httpContext.Request.IsHttps}",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 10,
+                QueueLimit = 0,
+                Window = TimeSpan.FromMinutes(1)
+            }));
 });
 
-#endregion
-
-#region authorization config
-
-builder.Services.AddAuthorization();
-builder.Services
-    .AddIdentityApiEndpoints<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
-
-// Policy / role registration
-// builder.Services
-//     .AddAuthorizationBuilder()
-//     .AddPolicy(Policies.ManageTests, policy => policy.RequireRole(Roles.Admin))
-//     .AddPolicy(Policies.ManageTests, policy => policy.RequireRole(Roles.Admin));
-
-#endregion
-
-#region Swagger UI config
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(x =>
+// PGSQL database
+builder.Services.AddDbContext<AppDbContext>(x =>
 {
-    x.AddSecurityDefinition(
-        "oauth2", 
-        new OpenApiSecurityScheme
+    var seedDb = builder.Configuration.GetValue<bool>("SeedDatabase");
+    x.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
+        .UseAsyncSeeding(async (db, _, _) =>
         {
-            In = ParameterLocation.Header,
-            Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey
+            if (seedDb) await DataSeeder.ExecuteAsync((AppDbContext)db);
+        })
+        .UseSeeding((db, _) =>
+        {
+            if (seedDb) DataSeeder.Execute((AppDbContext)db);
         });
-    x.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+// Authorization / identity
+builder.Services
+    .AddAuthorization()
+    .AddIdentityApiEndpoints<ApplicationUser>(x =>
+    {
+        x.User.RequireUniqueEmail = true;
+        x.SignIn.RequireConfirmedAccount = false;
+        x.SignIn.RequireConfirmedEmail = false;
+        x.SignIn.RequireConfirmedPhoneNumber = false;
+    })
+    .AddRoles<IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultUI();
+
+// Swagger (backend doc. and testing)
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen(x =>
+    {
+        x.AddSecurityDefinition(
+            "oauth2",
+            new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey
+            });
+        x.OperationFilter<SecurityRequirementsOperationFilter>();
+        x.IncludeXmlComments(Path.Combine(
+            AppContext.BaseDirectory,
+            $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+    });
+
+// Register services
+builder.Services.AddScoped<YouTubeApiService>();
 
 #endregion
 
 var app = builder.Build();
 
-#region dev env config
+#region app configuration
 
+// Ensure DB exists
+await using (var serviceScope = app.Services.CreateAsyncScope())
+await using (var db = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>())
+    await db.Database.EnsureCreatedAsync();
+
+app.UseCors(options =>
+    options.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins(app.Configuration.GetValue<string>("AllowedOrigins") ?? "*"));
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+// Global exception handler
+app.UseExceptionHandler(exceptionHandlerApp =>
+    exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context)));
+
+// Development environment configuration
 if (app.Environment.IsDevelopment())
 {
     // Swagger UI
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(x =>
+    {
+        x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        x.RoutePrefix = "docs";
+    });
 }
 
 #endregion
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
 
 app.Run();

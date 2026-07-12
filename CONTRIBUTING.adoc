@@ -1,7 +1,6 @@
 = Contributing guidelines
 :toc: macro
 :toclevels: 5
-:sectnums:
 
 Wanna contribute to the Amusix development journey? Take a look at the project repository guidelines described here!
 
@@ -13,7 +12,7 @@ This section describes basic guidelines to keep this repository alive and clean.
 
 === Issues
 
-Any bug to report? An idea of feature you'd like to see in Amusix? https://github.com/Tilianh/Todolist/issues/new[Create a new bug report or a feature request in GitHub.]
+Any bug or vulnerability to report? An idea of feature you'd like to see in Amusix? https://github.com/Tilianh/Amusix/issues/new[Create a new bug report or a feature request in GitHub.]
 
 == Code contribution
 

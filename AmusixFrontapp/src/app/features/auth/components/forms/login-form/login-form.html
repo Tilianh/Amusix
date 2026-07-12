@@ -1,0 +1,43 @@
+@if (isLoading()) {
+  <app-loading [loadingText]="'Logging in...'" />
+} @else {
+  <app-auth-page [title]="'Log in to Amusix'">
+    <form class="d-flex flex-column align-items-center w-100 gap-3" (submit)="loginUserAsync()">
+
+      <!-- Username -->
+      <div class="form-floating w-100">
+        <input [formField]="loginForm.username"
+               [class.is-invalid]="loginForm.username().dirty() && loginForm.username().invalid()"
+               type="text"
+               class="form-control"
+               id="usernameInput"
+               placeholder="Username">
+        <label for="usernameInput">Username*</label>
+        @if (loginForm.username().dirty() && loginForm.username().invalid()) {
+          <div class="invalid-feedback">This field is mandatory</div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="form-floating w-100">
+        <input [formField]="loginForm.password"
+               [class.is-invalid]="loginForm.password().dirty() && loginForm.password().invalid()"
+               type="password"
+               class="form-control"
+               id="passwordInput"
+               placeholder="Password">
+        <label for="passwordInput">Password*</label>
+        @if (loginForm.password().dirty() && loginForm.password().invalid()) {
+          <div class="invalid-feedback">This field is mandatory</div>
+        }
+      </div>
+
+      <button type="submit" [disabled]="loginForm().invalid()"
+              class="btn btn-primary px-4 py-2">Log in
+      </button>
+
+      <a routerLink="/register">No account? Register</a>
+
+    </form>
+  </app-auth-page>
+}

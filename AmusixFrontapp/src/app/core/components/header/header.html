@@ -1,0 +1,19 @@
+<nav class="navbar bg-primary py-3 px-4">
+  <div (click)="appInfoModal.open()" class="navbar-brand text-white cursor-pointer">Amusix
+    <small class="opacity-75">v{{ appVersion() }}</small>
+  </div>
+  <a routerLinkActive="d-none" routerLink="/my-profile" class="btn btn-outline-light">
+    <i class="bi bi-person-circle me-1"></i> Profile
+  </a>
+</nav>
+<app-song-search-bar/>
+
+<app-modal #appInfoModal [title]="'Application information'">
+  <div class="d-flex flex-column gap-2">
+    <div>Application: <b>Amusix</b></div>
+    <div>Version: <b>{{ appVersion() }}</b></div>
+    <a href="https://github.com/Tilianh/Amusix" target="_blank">
+      See open-source project and contributors on GitHub
+    </a>
+  </div>
+</app-modal>
