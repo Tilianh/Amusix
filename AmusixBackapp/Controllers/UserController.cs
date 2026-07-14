@@ -28,9 +28,9 @@ public class UserController(
     /// </summary>
     /// <param name="userForm">User to register.</param>
     [HttpPost("register"), AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict, Description = "Username already taken")]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Description = "Insufficient password strength")]
+    [ProducesResponseType(StatusCodes.Status201Created, Description = "New user registered")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> RegisterUserAsync(RegisterUserFormVm userForm)
     {
@@ -71,9 +71,9 @@ public class UserController(
     /// <param name="userForm">User to log in.</param>
     /// <returns>The corresponding access token if the authentication is successful.</returns>
     [HttpPost("login"), AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "User not found")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Description = "Invalid password")]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Return corresponding access token")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> LoginUserAsync(LoginUserFormVm userForm)
     {
@@ -99,7 +99,7 @@ public class UserController(
     /// <returns>Current user data.</returns>
     [HttpGet("current"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Return current user data", Type = typeof(UserInfoVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<UserInfoVm>> GetCurrentUserAsync()
     {
@@ -120,16 +120,16 @@ public class UserController(
     /// <param name="userForm">User password update form.</param>
     [HttpPut("current/updatePassword"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Old password invalid or new password is too weak")]
+    [ProducesResponseType(
+        StatusCodes.Status409Conflict,
+        Description = "New password and old password can't be the same")]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Password updated")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> UpdateCurrentUserPasswordAsync(UserPasswordUpdateFormVm userForm)
     {
-        if (userForm.OldPassword == userForm.NewPassword)
-            return JsonResult(StatusCodes.Status409Conflict,
-                new { Message = "New password and old password can't be the same" });
-
         var userDb = (await userManager.GetUserAsync(User))!;
 
         if (!await userManager.CheckPasswordAsync(userDb, userForm.OldPassword))
@@ -146,6 +146,10 @@ public class UserController(
             }
             return JsonResult(StatusCodes.Status500InternalServerError, new { Error = error });
         }
+        
+        if (userForm.OldPassword == userForm.NewPassword)
+            return JsonResult(StatusCodes.Status409Conflict,
+                new { Message = "New password and old password can't be the same" });
 
         return JsonResult(StatusCodes.Status200OK, new { Message = "Password updated" });
     }

@@ -1,0 +1,12 @@
+{
+  "name": "amusix-testapp",
+  "private": true,
+  "scripts": {
+    "test": "npx cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^15.18.1",
+    "cypress-vite": "^1.10.2",
+    "typescript": "^7.0.2"
+  }
+}

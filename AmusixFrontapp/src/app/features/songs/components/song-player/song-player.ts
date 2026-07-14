@@ -113,7 +113,11 @@ export class SongPlayer extends AmxComponentBase implements AfterViewInit {
   protected async setSongInvalid() {
     this.hasError = true;
     if (this.playedSong().status != SongStatus.NOT_VALID && this.playedSong().playlistId) {
-      await this.playlistService.updateSongStatusAsync(this.playedSong().playlistId!, this.playedSong().ytbId, SongStatus.NOT_VALID);
+      await this.playlistService.updateSongStatusAsync(
+        this.playedSong().playlistId!,
+        this.playedSong().ytbId,
+        {songStatus: SongStatus.NOT_VALID}
+      );
       this.playedSong().status = SongStatus.NOT_VALID;
     }
     this.showAlert(AlertType.ERROR, `This song can't be played`, 10);

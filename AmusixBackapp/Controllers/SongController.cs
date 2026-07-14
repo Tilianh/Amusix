@@ -23,7 +23,11 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
     /// <returns>Songs corresponding to the search from the YouTube API.</returns>
     [HttpPost("search"), HttpPost("search/{pageToken}")]
     [Authorize(Roles = AppRoles.User)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status200OK,
+        Description = "Return corresponding paginated songs",
+        Type = typeof(PaginatedListPage<SearchResultSongVm>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PaginatedListPage<SearchResultSongVm>>> SearchSongsAsync(
         SongSearchFormVm songSearchForm,
@@ -49,7 +53,7 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
 
         // Get corresponding video data
         var videoData = (await videoRequest.ExecuteAsync())!;
-        
+
         var songs = searchResult.Items
             .SelectMany(x =>
                 videoData.Items
@@ -64,15 +68,14 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
                         ThumbnailUrl = y.Snippet.Thumbnails.Standard?.Url ?? ""
                     }))
             .ToList();
-        
+
         return JsonResult(StatusCodes.Status200OK,
             new PaginatedListPage<SearchResultSongVm>(
                 songs,
-                pageToken == null ? // Total result count = first page size if no next page token provided
-                    searchResult.NextPageToken != null ?
-                        totalResultCount:
-                        songs.Count :
-                    totalResultCount,
+                pageToken == null
+                    ? // Total result count = first page size if no next page token provided
+                    searchResult.NextPageToken != null ? totalResultCount : songs.Count
+                    : totalResultCount,
                 pageToken,
                 searchResult.PrevPageToken,
                 searchResult.NextPageToken));

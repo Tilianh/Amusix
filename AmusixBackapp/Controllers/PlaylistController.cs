@@ -29,7 +29,10 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     [HttpGet, HttpGet("{pageToken}")]
     [Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status200OK,
+        Description = "Return corresponding paginated playlists",
+        Type = typeof(PaginatedListPage<PlaylistInfoVm>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<PaginatedListPage<PlaylistInfoVm>> GetCurrentUserPlaylists(string? pageToken = null)
     {
@@ -60,9 +63,14 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Corresponding playlist.</returns>
     [HttpGet("{playlistId:guid}"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to access this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist not found")]
+    [ProducesResponseType(
+        StatusCodes.Status200OK,
+        Description = "Return corresponding playlist",
+        Type = typeof(PlaylistInfoVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<PlaylistInfoVm> GetCurrentUserPlaylist(Guid playlistId)
     {
@@ -94,9 +102,12 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Added playlist.</returns>
     [HttpPost, Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status201Created,
+        Description = "Return added playlist",
+        Type = typeof(PlaylistInfoVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PlaylistSongVm>> AddPlaylistFromSongAsync(PlaylistAddFormVm playlistForm)
+    public async Task<ActionResult<PlaylistInfoVm>> AddPlaylistFromSongAsync(PlaylistAddFormVm playlistForm)
     {
         Playlist playlistDb = new()
         {
@@ -143,11 +154,16 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Updated playlist.</returns>
     [HttpPut("{playlistId:guid}"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to update this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist not found")]
+    [ProducesResponseType(
+        StatusCodes.Status200OK, 
+        Description = "Return updated playlist",
+        Type = typeof(PlaylistInfoVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PlaylistInfoVm>> UpdatePlaylistAsync(Guid playlistId, 
+    public async Task<ActionResult<PlaylistInfoVm>> UpdatePlaylistAsync(Guid playlistId,
         PlaylistUpdateFormVm playlistForm)
     {
         var playlistDb = db.Playlists.FirstOrDefault(x => x.Id == playlistId);
@@ -180,9 +196,14 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Deleted playlist.</returns>
     [HttpDelete("{playlistId:guid}"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to delete this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist not found")]
+    [ProducesResponseType(
+        StatusCodes.Status200OK, 
+        Description = "Return deleted playlist",
+        Type = typeof(PlaylistInfoVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PlaylistInfoVm>> DeletePlaylistAsync(Guid playlistId)
     {
@@ -221,9 +242,14 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     [HttpGet("{playlistId:guid}/songs"), HttpGet("{playlistId:guid}/songs/{pageToken}")]
     [Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to access this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist not found")]
+    [ProducesResponseType(
+        StatusCodes.Status200OK, 
+        Description = "Return corresponding paginated songs",
+        Type = typeof(PaginatedListPage<PlaylistSongVm>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<PaginatedListPage<PlaylistSongVm>> GetPlaylistSongs(Guid playlistId, string? pageToken = null)
     {
@@ -263,10 +289,16 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Added song.</returns>
     [HttpPost("{playlistId:guid}/songs"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to update this playlist")]
+    [ProducesResponseType(
+        StatusCodes.Status404NotFound, 
+        Description = "Playlist not found")]
+    [ProducesResponseType(
+        StatusCodes.Status409Conflict,
+        Description = "This song has already been added to this playlist")]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Return added song", Type = typeof(PlaylistSongVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PlaylistSongVm>> AddSongAsync(Guid playlistId, PlaylistSongAddFormVm songForm)
     {
@@ -282,7 +314,7 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
         if (playlistDb.Songs.Any(x => x.YtbId == songForm.SongYtbId))
             return JsonResult(StatusCodes.Status409Conflict,
                 new { Message = "This song has already been added to this playlist" });
-        
+
         PlaylistSong songDb = new()
         {
             YtbId = songForm.SongYtbId,
@@ -323,9 +355,11 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// <returns>Deleted song.</returns>
     [HttpDelete("{playlistId:guid}/songs/{songId}"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to update this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist or song not found")]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Return deleted song", Type = typeof(PlaylistSongVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PlaylistSongVm>> RemoveSongAsync(Guid playlistId, string songId)
     {
@@ -367,16 +401,18 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
     /// </summary>
     /// <param name="playlistId">ID of the playlist containing the song.</param>
     /// <param name="songId">ID of the song to update.</param>
-    /// <param name="songStatus">Updated song statuts.</param>
+    /// <param name="songForm">Song to update.</param>
     /// <returns>Updated song.</returns>
     [HttpPut("{playlistId:guid}/songs/{songId}/updateStatus"), Authorize(Roles = AppRoles.User)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Current user is not authorized to access this playlist")]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Description = "Playlist or song not found")]
+    [ProducesResponseType(StatusCodes.Status200OK, Description = "Return updated song", Type = typeof(PlaylistSongVm))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PlaylistSongVm>> UpdateSongStatusAsync(Guid playlistId, string songId,
-        [FromBody] SongStatus songStatus)
+        PlaylistSongUpdateFormVm songForm)
     {
         var playlistDb = db.Playlists.Include(x => x.Songs).FirstOrDefault(x => x.Id == playlistId);
 
@@ -392,7 +428,7 @@ public class PlaylistController(AppDbContext db) : AmxControllerBase
         if (songDb == null)
             return JsonResult(StatusCodes.Status404NotFound, new { Message = "Song not found in this playlist" });
 
-        songDb.Status = songStatus;
+        songDb.Status = songForm.SongStatus;
         await db.SaveChangesAsync();
 
         return JsonResult(StatusCodes.Status200OK,

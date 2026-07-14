@@ -59,7 +59,7 @@ dotnet tool install --global dotnet-ef
 . Add / edit the configurations files at the backend project's root:
 +
 * `appsettings.Development.json`: local development environment configuration
-* `appsettings.Production.ts`: production configuration file
+* `appsettings.Production.json`: production configuration file
 
 . Add / replace the following fields in the files:
 +

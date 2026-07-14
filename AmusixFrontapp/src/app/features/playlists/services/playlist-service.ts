@@ -5,9 +5,9 @@ import { environment } from '../../../../environments/environment';
 import { PaginatedListPage } from '../../../shared/models/paginated-list-page';
 import { PlaylistSong } from '../models/playlist-song';
 import { PlaylistUpdateForm } from '../models/playlist-update-form';
-import { SongStatus } from '../../../shared/enums/song-status';
 import { PlaylistAddForm } from '../models/playlist-add-form';
 import { PlaylistSongAddForm } from '../models/playlist-song-add-form';
+import { PlaylistSongUpdateForm } from '../models/playlist-song-update-form';
 
 @Injectable({
   providedIn: 'root'
@@ -95,13 +95,11 @@ export class PlaylistService extends AmxServiceBase {
    * Update the status of a song contained in one of the current user's playlists.
    * @param playlistId ID of the playlist containing the song.
    * @param songId ID of the song to update.
-   * @param songStatus Updated song status.
+   * @param song Song to update.
    * @returns Updated song.
    */
-  public updateSongStatusAsync(playlistId: string, songId: string, songStatus: SongStatus) {
-    return this.tryPutAsync<SongStatus, PlaylistSong>(
-      `${this.apiUrl}/${playlistId}/songs/${songId}/updateStatus`,
-      songStatus
-    );
+  public updateSongStatusAsync(playlistId: string, songId: string, song: PlaylistSongUpdateForm) {
+    return this.tryPutAsync<PlaylistSongUpdateForm, PlaylistSong>(
+      `${this.apiUrl}/${playlistId}/songs/${songId}/updateStatus`, song);
   }
 }

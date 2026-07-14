@@ -12,12 +12,15 @@ Amusix in an application powered by the YouTube API to listen to and share music
 
 It is based on .NET 10 and Angular 21.
 
-== Application architecture
+== Architecture
 
-* `AmusixBackapp`: backend application (.NET 10)
-* `AmusixFrontapp`: frontend application (Angular 21)
-* `AmusixTestapp`: test application (Cypress 15)
+=== File structure
+
+* `AmusixBackapp/`: .NET backend application
+* `AmusixFrontapp/`: Angular frontend application
+* `docs/`: repo documentation
+* `tests/`: Cypress automatized tests
 
 == Setup & launch
 
-Each of the `AmusixBackapp/`, `AmusixFrontapp/` and `AmusixTestapp/` directories contain a `README.adoc` file at their root with step-by-step guides on how to properly set up and launch their respective application for development and production environments.
+Each of the `AmusixBackapp/`, `AmusixFrontapp/` and `tests/` directories contain a `README.adoc` file at their root with step-by-step guides on how to properly set up and launch everything you need.
