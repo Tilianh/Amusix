@@ -2,7 +2,8 @@
   "name": "amusix-frontapp",
   "version": "0.0.0",
   "scripts": {
-    "build": "ng build"
+    "build": "ng build",
+    "compodoc": "npx compodoc -p tsconfig.doc.json -d compodoc"
   },
   "private": true,
   "packageManager": "npm@11.0.0",

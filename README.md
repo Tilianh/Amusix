@@ -35,15 +35,11 @@ It is based on .NET 10 and Angular 21.
 
 2. Create a `.env` file at the repo directory's root with the following content
     ``` apacheconf
-    DATABASE_USER=
-    DATABASE_PASSWORD=
     YOUTUBE_API_KEY=
     YOUTUBE_API_APP_NAME=
     ```
 
 3. Provide a values for the following fields in the created file:
-    * `DATABASE_USER`: database user (of your choice)
-    * `DATABASE_PASSWORD`: database password (of your choice)
     * `YOUTUBE_API_KEY`: Google Cloud (YouTube) [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
     * `YOUTUBE_API_APP_NAME`: Google Cloud application name
 
@@ -61,3 +57,11 @@ docker-compose up -d --build
 Interface access URL: http://localhost
 
 API access URL: http://localhost/api
+
+Database access:
+
+* Host: `localhost`
+* Port: `5432`
+* User: `root`
+* Password: `root`
+* Database: `amusix`

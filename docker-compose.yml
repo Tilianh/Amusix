@@ -9,8 +9,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
       PGPORT: 5432
     volumes:
       - amx-pgdb-volume:/var/lib/postgresql
@@ -19,8 +19,6 @@ services:
     build:
       context: AmusixBackapp/
       args:
-        DATABASE_USER: ${DATABASE_USER}
-        DATABASE_PASSWORD: ${DATABASE_PASSWORD}
         YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
         YOUTUBE_API_APP_NAME: ${YOUTUBE_API_APP_NAME}
     container_name: amx-api

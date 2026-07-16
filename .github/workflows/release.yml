@@ -5,37 +5,25 @@ on:
     branches:
       - 'main'
 
-env:
-  PACKAGE_JSON_PATH: ${{ vars.PACKAGE_JSON_PATH }}
-
 jobs:
 
-# TODO: generate and deploy frontend (+ backend?) doc on GitHub Pages?
-#  generate_doc:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: ▶ Create GitHub Pages artifact
-#        uses: actions/upload-pages-artifact@v3
-#        with:
-#          name: github-pages
-#          path: client/dist/.../browser
-#      - name: ▶ Deploy GitHub Pages artifact
-#        id: deployment
-#        uses: actions/deploy-pages@v4
-
-# TODO: build and push Docker images to Docker Hub?
-#  push_docker_images:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: ▶ Build and push Docker images to Docker Hub
-#        run: |
-#          docker build -t ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }} .
-#          docker tag ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }} ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:latest
-#          echo "${{ env.DOCKER_PASSWORD }}" | docker login -u "${{ env.DOCKER_USER }}" --password-stdin
-#          docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:${{ github.sha }}
-#          docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:latest
+  generate_frontend_doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: ▶ Generate documentation
+        working-directory: AmusixFrontapp/
+        run: |
+          npm i -g @compodoc/compodoc
+          npm run compodoc
+      - name: ▶ Create GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          name: github-pages
+          path: compodoc/
+      - name: ▶ Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v5
 
 # TODO: deploy app on server?
 #  deploy:
@@ -62,8 +50,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: ▶ Extract release name
         id: version
+        working-directory: AmusixFrontapp/
         run: |
-          VERSION=$(node -p "require('${{ env.PACKAGE_JSON_PATH }}/package.json').version")
+          VERSION=$(node -p "require('package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: ▶ Configure Git
         run: |
