@@ -87,10 +87,13 @@ var app = builder.Build();
 
 #region app configuration
 
-// Ensure DB exists
+// Ensure DB is up to date
 await using (var serviceScope = app.Services.CreateAsyncScope())
 await using (var db = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>())
+{
+    await db.Database.MigrateAsync();
     await db.Database.EnsureCreatedAsync();
+}
 
 app.UseCors(options =>
     options.AllowAnyMethod()

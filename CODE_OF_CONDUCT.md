@@ -1,6 +1,6 @@
-= Code of conduct
+# Code of conduct
 
-*Have some common sens, be respectful and considerate.*
+**Have some common sens, be respectful and considerate.**
 
 Keep in mind everybody might not have your personal knowledge of things, so try to keep it cool whenever you might be asked to elaborate on things.
 

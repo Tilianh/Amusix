@@ -1,3 +1,0 @@
-= Security guidelines
-
-If you find any bug or vulnerability within Amusix's code, don't hesitate to https://github.com/Tilianh/Amusix/issues/new[open a new issue]!

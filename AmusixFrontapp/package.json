@@ -2,6 +2,7 @@
   "name": "amusix-frontapp",
   "version": "0.0.0",
   "scripts": {
+    "build": "ng build"
   },
   "private": true,
   "packageManager": "npm@11.0.0",

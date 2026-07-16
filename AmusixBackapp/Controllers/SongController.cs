@@ -39,7 +39,7 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
         searchRequest.Q = songSearchForm.SearchText;
         searchRequest.EventType = SearchResource.ListRequest.EventTypeEnum.None;
         searchRequest.Type = "video";
-        searchRequest.VideoCategoryId = "10"; // Music category
+        //searchRequest.VideoCategoryId = "10"; // Music category
         searchRequest.Order = SearchResource.ListRequest.OrderEnum.Relevance;
         searchRequest.MaxResults = AppConstants.DataPageSize;
         searchRequest.PageToken = pageToken;

@@ -3,7 +3,6 @@ using AmusixBackapp.Data.Models;
 using AmusixBackapp.Shared;
 using AmusixBackapp.Shared.Classes;
 using AmusixBackapp.Shared.Classes.Pagination;
-using AmusixBackapp.Shared.Enums;
 using AmusixBackapp.Shared.ViewModels.Playlists;
 using AmusixBackapp.Shared.ViewModels.Songs;
 using Microsoft.AspNetCore.Authorization;

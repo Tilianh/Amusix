@@ -5,6 +5,5 @@ export class SilentError extends Error {
     super.cause = innerException.cause;
     super.message = innerException.message;
     super.name = innerException.name;
-    super.stack = innerException.stack;
   }
 }

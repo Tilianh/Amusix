@@ -17,6 +17,10 @@
     opacity: 0;
     background: linear-gradient(to right, transparent, white 15%);
     transition-duration: 0.25s;
+
+    .bi.blink {
+      animation: blink 3s ease-in-out infinite;
+    }
   }
 
   .song-thumbnail {
@@ -30,5 +34,14 @@
       object-position: center;
       object-view-box: inset(13%);
     }
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
   }
 }

@@ -101,9 +101,15 @@ export class SongPlayer extends AmxComponentBase implements AfterViewInit {
     setInterval(
       async () => {
         if (this.playerDisplayMode() != SongPlayerDisplayMode.HIDDEN && !this.hasError) {
-          if (this.ytbPlayerState() == PlayerStates.PLAYING)
-            this.updateTimelineDisplay(await this.ytbPlayer.getCurrentTime() ?? 0);
           this.ytbPlayerState.set(await this.ytbPlayer.getPlayerState() ?? PlayerStates.UNSTARTED);
+          switch (this.ytbPlayerState()) {
+            case PlayerStates.PLAYING:
+              this.updateTimelineDisplay(await this.ytbPlayer.getCurrentTime() ?? 0);
+              break;
+            case PlayerStates.ENDED:
+              this.updateTimelineDisplay(this.songTotalDuration());
+              break;
+          }
         }
       },
       1000
