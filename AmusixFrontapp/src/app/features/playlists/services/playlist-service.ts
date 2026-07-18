@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AmxServiceBase } from '../../../shared/services/amx-service-base';
 import { PlaylistInfo } from '../models/playlist-info';
-import { environment } from '../../../../environments/environment';
+import * as environment from '../../../../environments/environment.json';
 import { PaginatedListPage } from '../../../shared/models/paginated-list-page';
 import { PlaylistSong } from '../models/playlist-song';
 import { PlaylistUpdateForm } from '../models/playlist-update-form';

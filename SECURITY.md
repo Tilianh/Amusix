@@ -1,4 +1,4 @@
 # Security guidelines
 
-If you find any bug or vulnerability within Amusix's code, don't hesitate to [open a new issue](https://github.com/Tilianh/Amusix/issues/new)!
+If you find any new bug or vulnerability within Amusix's code, don't hesitate to [open an issue](https://github.com/Tilianh/Amusix/issues/new)!
 

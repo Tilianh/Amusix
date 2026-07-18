@@ -7,52 +7,81 @@ on:
 
 jobs:
 
-  generate_frontend_doc:
+  generate-frontend-doc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          sparse-checkout: AmusixFrontapp/
       - name: ▶ Generate documentation
         working-directory: AmusixFrontapp/
         run: |
           npm i -g @compodoc/compodoc
-          npm run compodoc
+          npm run compodoc:generate -- -d compodoc/docs/frontend
       - name: ▶ Create GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
-          path: compodoc/
+          path: AmusixFrontapp/compodoc/
       - name: ▶ Deploy GitHub Pages artifact
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          token: '${{ github.token }}'
 
-# TODO: deploy app on server?
-#  deploy:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: ▶ Download build artifact
-#        uses: actions/download-artifact@master
-#        with:
-#          name:
-#          path:
-#      - name: ▶ Deploying build using SSH
-#        uses: easingthemes/ssh-deploy@main
-#        with:
-#          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
-#          REMOTE_HOST: ${{ env.REMOTE_HOST }}
-#          REMOTE_USER: ${{ env.REMOTE_USER }}
-#          SOURCE:
-#          TARGET: ${{ env.SERVER_DEPLOY_PATH }}
-#          SCRIPT_BEFORE: rm -fr ${{ env.SERVER_DEPLOY_PATH }}/* ${{ env.SERVER_DEPLOY_PATH }}/\.[^\.]*
-
-  draft-release:
+  deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: ▶ Deploy build (using SSH connection)
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          SCRIPT_BEFORE_REQUIRED: true
+          SCRIPT_BEFORE: |
+            if ls ${{ secrets.SSH_DEPLOY_DIR_PATH }}; then
+              cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
+              if docker container ls | grep amx-database; then
+                mkdir -p ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
+                docker exec amx-database mkdir -p pgdb_backups
+                docker exec amx-database pg_dump --format c --file "pgdb_backups/amusix_pgdb_backup_$(date +'%m%d%y%H%M%S').backup" amusix
+                docker cp amx-database:pgdb_backups/ ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
+                mv ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/* ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
+                rm -rf ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/
+                docker exec amx-database rm -rf pgdb_backups
+              fi
+              git pull
+            else
+              mkdir -p ${{ secrets.SSH_DEPLOY_DIR_PATH }}
+              cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}/..
+              git clone ${{ github.server_url }}/${{ github.repository }}
+              rm -fr ${{ secrets.SSH_DEPLOY_DIR_PATH }}
+              mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
+              cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
+              echo "APP_BASE_URL=${{ vars.APP_BASE_URL }}" > .env
+              echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
+              echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
+            fi
+            docker compose up -d --build   
+
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: AmusixFrontapp/package.json
       - name: ▶ Extract release name
         id: version
         working-directory: AmusixFrontapp/
         run: |
-          VERSION=$(node -p "require('package.json').version")
+          VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: ▶ Configure Git
         run: |
@@ -63,12 +92,11 @@ jobs:
           git tag -a "v${{ steps.version.outputs.version }}" \
             -m "Release v${{ steps.version.outputs.version }}"
           git push origin "v${{ steps.version.outputs.version }}"
-      - name: Draft GitHub Release
+      - name: ▶ Create GitHub Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GitHub Actions
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "v${{ steps.version.outputs.version }}" \
             --title "Release v${{ steps.version.outputs.version }}" \
             --generate-notes \
-            --draft \
             --latest

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AmxServiceBase } from '../../../shared/services/amx-service-base';
-import { environment } from '../../../../environments/environment';
+import * as environment from '../../../../environments/environment.json';
 import { UserInfo } from '../models/user-info';
 import { UserPasswordUpdateForm } from '../models/user-password-update-form';
 

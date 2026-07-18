@@ -1,72 +1,69 @@
-# Amusix Frontend Application
+# Amusix frontend application
 
 ## Stack
 
-### Main stack
-
-* [Node.js 24](https://nodejs.org/fr)
-* [Angular 21](https://v21.angular.dev/overview) (+ TypeScript)
-* [Bootstrap 5.3](https://getbootstrap.com/docs/5.3) (+ SCSS)
-
-### External NPM dependencies
-
-* [`universal-cookie` (8.1.2)](https://www.npmjs.com/package/universal-cookie/v/8.1.2): browser cookie management
-* [`youtube-player` (5.6.0)](https://www.npmjs.com/package/youtube-player/v/5.6.0): YouTube player integration and interactions
-
-## File structure
-
-* `src/`:
-  * `app/`:
-    * `core/`: core components
-    * `features/`:
-      * `auth/`: authentication resources
-        * Login form
-        * Register form
-      * `home-page/`: application home-page
-      * `playlists/`: playlist resources
-        * Modal to add song to a playlist
-        * Current user's playlists page
-        * Playlist consultation / song listing page
-        * Playlist editing modal
-        * Playlist listing item
-        * Playlist selection item
-        * Playlist song listing item
-      * `songs/`: songs resources
-        * Search result song listing item
-        * Song player
-        * Song search bar
-        * Song search results page
-      * `user-profile/`: user profile resources
-        * Current user's profile page
-        * Password changing modal
-    * `shared/`: shared / reusable resources
-    * `app.routes.ts`: page routes
-  * `environment/`: environment files
-  * `styles/`: styling sheets
+<a href="https://nodejs.org"><img alt="Node.js" src="https://img.shields.io/badge/Node.js-5FA04E.svg?style=for-the-badge&logo=nodedotjs&logoColor=white"/></a>
+<a href="https://angular.dev"><img alt="Angular" src="https://img.shields.io/badge/Angular-0F0F11.svg?style=for-the-badge&logo=Angular&logoColor=white"/></a>
+<a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white"/></a>
+<a href="https://getbootstrap.com"><img alt="Bootstrap" src="https://img.shields.io/badge/Bootstrap-7952B3.svg?style=for-the-badge&logo=Bootstrap&logoColor=white"/></a>
 
 > [!NOTE]
-> Resource / feature directories are structured as follows:
-> * `components/`: Angular component files (HTML, SCSS and TS)
-> * `models/`: data models (user, playlist, song, etc.)
-> * `services/`: services (component communication, API calls, etc.)
+> Check the `package.json` file at the project's root to get an overview of all dependencies and versions.
+
+## Project structure
+
+```
+src
+├───app
+│   ├───core
+│   ├───features
+│   │   ├───auth
+│   │   ├───home-page
+│   │   ├───playlists
+│   │   │   ├───add-playlist-song-modal
+│   │   │   ├───my-playlists
+│   │   │   ├───playlist
+│   │   │   ├───playlist-edit-modal
+│   │   │   ├───playlist-item
+│   │   │   ├───playlist-select-item
+│   │   │   └───playlist-song-item
+│   │   ├───songs
+│   │   │   ├───search-result-song-item
+│   │   │   ├───song-player
+│   │   │   ├───song-search-bar
+│   │   │   └───song-search-results
+│   │   └───user-profile
+│   │       ├───my-profile
+│   │       └───password-change-modal
+│   └───shared
+├───environments
+└───styles
+```
+
+* `app/core/`: interface core components (header, footer, layout, etc.)
+* `app/features/`: main feature implementation
+* `app/shared/`: shared resources
+* `app/app.routes.ts`: route declaration
+* `environments/`: environment files
+* `styles/`: SCSS styling sheets
 
 ## Startup (for development)
 
 ### Setup
 
-1. Install Node.js (if necessary)
+1. Install [Node.js](https://nodejs.org) (if necessary)
 
-2. Install all project dependencies by running the following command at the frontend project's root in a terminal:
+2. Install all project dependencies by running the following command at the project's root in a terminal:
    ```shell
     npm i
     ```
 
 ### Run
 
-Run the following command at the frontend project's root in a terminal to launch the application in a local development environment:
+Launch the application in a local development server by running the following command at the project's root in a terminal:
 
 ```shell
 ng serve
 ```
 
-Access URL: http://localhost:4200
+> Access URL: http://localhost:4200

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AmxServiceBase } from '../../../shared/services/amx-service-base';
-import { environment } from '../../../../environments/environment';
+import * as environment from '../../../../environments/environment.json';
 import { SongSearchForm } from '../models/song-search-form';
 import { PaginatedListPage } from '../../../shared/models/paginated-list-page';
 import { SearchResultSong } from '../models/search-result-song';

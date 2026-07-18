@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "ng build",
-    "compodoc": "npx compodoc -p tsconfig.doc.json -d compodoc"
+    "compodoc:generate": "npx compodoc -p tsconfig.doc.json"
   },
   "private": true,
   "packageManager": "npm@11.0.0",

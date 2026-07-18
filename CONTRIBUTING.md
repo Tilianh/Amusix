@@ -1,72 +1,71 @@
 # Contributing guidelines
 
-Wanna contribute to the Amusix development journey? Take a look at the project repository guidelines described here!
+**Wanna contribute to the Amusix development journey?
+Take a look at the guidelines described here and help keep this repository alive and clean.**
 
-## Basic repository guidelines
+## Any feedback? Open an issue!
 
-This section describes basic guidelines to keep this repository alive and clean.
-
-### Issues
-
-Any bug or vulnerability to report? An idea of feature you'd like to see in Amusix? [Create a new bug report or a feature request in GitHub.](https://github.com/Tilianh/Amusix/issues/new)
+Any new bug or vulnerability to report?
+A new feature you'd like to see in Amusix?
+[Open an issue!](https://github.com/Tilianh/Amusix/issues/new)
 
 ## Code contribution
 
-Wanna put your hands in Amusix's code? This section describes guidelines for code contribution.
+Wanna put your hands in Amusix's code? Here are the steps to follow for code contribution:
 
-### Branche strategy
+> [!TIP]
+> Check the `README.md` file of the `AmusixFrontapp/`, `AmusixBackapp/` and `tests/` directories to know more on how to set up and run the application for development.
 
-If you want to contribute to Amusix's code, you first need to know how this repository works, how do you create branches and name them, where and how you merge your code so it can be included in a new version of the application.
+1. Create a fork of this GitHub repository
 
-This section is here to help you quickly understand the branch strategy that was set up for this repository.
+2. Create your branch:
+    * You can create a branch from an issue
+    * Name your branch however you want, just know that `main` and `release` are reserved
+    * Make sure your branch name is short but 'explicit enough'
 
-#### Naming
+3. Enhancements, fixes → code what you have in mind
 
-Reserved branch names:
+4. Implement tests in `test/`:
+    * Implement the tests that cover your code to prevent regression
+    * Check the [test directory `README.md` file](tests/README.md) to know where to add your tests and how to locally run them
+    * Test your tests and your code to ensure everything works fine
 
-* `main`:
-  * Latest code version
-  * Protected (cannot push anything on it)
-* `release`:
-  * To prepare a new release
-  * Only these branches can be merged into 'main'
+5. Push your changes, use explicite descriptions for your commits
 
-You can name any other branche however you want. Just be sure their name is explicit enough!
+6. Open a pull request from your branch into the `release` branch (tests will be automatically run to ensure there is no regression in your code)
 
-#### Release workflow
+7. Wait for your branch to be approved, and maybe your contribution will make it into the next release!
 
-Just so you know, here are the steps to draft a new release of the application:
+## Release workflow
 
-1. Create a `release` branch from `main`
+Just so you know, here are the steps that are followed to release a new version of Amusix:
 
-2. Merge all branches corresponding to features and fixes to include in the version into the created `release` branch
+1. Branches corresponding to features and fixes are selected to be included in the next version of the application → the selected branches are merged into `release`
 
-3. Increment the application version in the `package.json` file at the root of the frontend application `AmusixFrontapp` ([check how to number a version](#version-numbering))
+2. The [application version is incremented](#version-numbering) in the `package.json` file at the root of the `AmusixFrontapp/` directory
 
-4. When everything is ready, merge the `release` branch into `main` via a pull request
+3. When everything is ready, the `release` branch is merged into `main` via a pull request
 
-When the merge is triggered from the created pull request, the following steps will be automatically executed:
+4. Tests are automatically run to ensure all changes have been correctly merged and the application still works fine
 
-1. Frontend documentation generation and deployment in GitHub Pages
+When the pull request is accepted and all the changes are merged into `main`, the repo CI / CD pipelines will automatically:
 
-2. Docker images building and pushing in Docker Hub
+1. Generate and deploy the frontend documentation in GitHub Pages
 
-3. Application deployment on the production server via the Docker container architecture
+2. Deploy the new version on the production server:
+    1. Connect to the server
+    2. Create a backup of the database
+    3. Pull all the changes brought in the new version
+    4. Rebuild and launch the dockerized application with the changes
 
-4. New GitHub release drafting
+3. Push a new GitHub release
 
-#### Version numbering
+### GitHub Actions worfklow chart
 
-Here is an explanation of how the application versions are numbered.
+<img alt="GitHub Actions workflows" src="docs/images/github_actions_workflows.svg" width="750"/>
 
-*Example:* `v1.2.5`
+### Version numbering
 
-* First number (`1`):
-** Major version number
-** Increased only when the version includes a big update that globally changes the application
-* Second number (`2`):
-** Evolution number
-** Increased when the version includes new features
-* Third number (`5`):
-** Fix number
-** Increased when the version only includes bug fixes
+Here's an explanation of how what the digits mean for each version of the application:
+
+<img alt="version numbering" src="docs/images/version_numbering.svg" width="175"/>

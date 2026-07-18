@@ -90,10 +90,7 @@ var app = builder.Build();
 // Ensure DB is up to date
 await using (var serviceScope = app.Services.CreateAsyncScope())
 await using (var db = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>())
-{
     await db.Database.MigrateAsync();
-    await db.Database.EnsureCreatedAsync();
-}
 
 app.UseCors(options =>
     options.AllowAnyMethod()
@@ -118,6 +115,9 @@ if (app.Environment.IsDevelopment())
         x.RoutePrefix = "docs";
     });
 }
+
+// Health check
+app.MapGet("/", () => Results.Ok(new { Status = "Amusix API online" }));
 
 #endregion
 

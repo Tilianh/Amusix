@@ -2,7 +2,6 @@ name: Bug report
 description: Report a bug you encountered with the application code.
 title: "[Bug] "
 labels: [ "Bug report" ]
-type: bug
 body:
 
   - type: textarea
@@ -60,7 +59,7 @@ body:
   - type: textarea
     id: additional-details
     attributes:
-      label: additional details
+      label: Additional details
       description: Add details to the report (optional)
     validations:
       required: false

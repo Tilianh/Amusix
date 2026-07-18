@@ -1,78 +1,49 @@
-# Amusix Backend Application
+# Amusix backend application
 
 ## Stack
 
-### Main stack
+<a href="https://dotnet.microsoft.com/download/dotnet"><img alt=".NET Core" src="https://img.shields.io/badge/.NET-512BD4.svg?style=for-the-badge&logo=dotnet&logoColor=white"/></a>
+<a href="https://www.postgresql.org"><img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-4169E1.svg?style=for-the-badge&logo=PostgreSQL&logoColor=white"/></a>
 
-* [.NET Core 10](https://dotnet.microsoft.com/download/dotnet/10.0) (Web API)
-* [Entity Framework Core 10](https://learn.microsoft.com/ef/)
+Amusix's backend application also relies on the [Entity Framework](https://learn.microsoft.com/aspnet/entity-framework) ORM to implement the database model via entities and migrations.
 
-### External NuGet dependencies
+> [!NOTE]
+> Check the `AmusixBackapp.csproj` file at the project's root to get an overview of all dependencies and versions.
 
-* [`Npgsql.EntityFrameworkCore.PostgreSQL` (10.0.3)](https://www.nuget.org/packages/Npgsql.EntityFrameworkCore.PostgreSQL/10.0.3):
-  PostgreSQL database connection
-* [`Bogus` (35.6.5)](https://www.nuget.org/packages/Bogus/35.6.5): fake data seeding
-* [`Google.Apis.YouTube.v3` (1.75.0.4205)](https://www.nuget.org/packages/Google.Apis.YouTube.v3/1.75.0.4205):
-  interactions with YouTube API
-* Identity (authentication / security management):
-    * [`Microsoft.AspNetCore.Identity.EntityFrameworkCore` (10.0.9)](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore/10.0.9)
-    * [`Microsoft.AspNetCore.Identity.UI` (10.0.9)](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.UI/10.0.9)
-* Swagger (API documentation and testing):
-    * [`Swashbuckle.AspNetCore.Filters` (10.0.1)](https://www.nuget.org/packages/Swashbuckle.AspNetCore.Filters/10.0.1)
-    * [`Swashbuckle.AspNetCore.Swagger` (10.2.3)](https://www.nuget.org/packages/Swashbuckle.AspNetCore.Swagger/10.2.3)
-    * [`Swashbuckle.AspNetCore.SwaggerGen` (10.2.3)](https://www.nuget.org/packages/Swashbuckle.AspNetCore.SwaggerGen/10.2.3)
-    * [`Swashbuckle.AspNetCore.SwaggerUI` (10.2.3)](https://www.nuget.org/packages/Swashbuckle.AspNetCore.SwaggerUI/10.2.3)
+## Project structure
 
-## File structure
+```
+Controllers
+Data
+├───Migrations
+└───Models
+Shared
+```
 
-* `Controllers/`: controllers defining API routes
-    * User management
-    * Playlist management
-    * Song researching
-* `Data/`:
-    * `Migrations/`: ordered Entity Framework migrations
-    * `Models/`: entities implementing the database model
-        * Users
-        * Playlists
-        * Songs
-    * `AppDbContext.cs`: database context configuration
-    * `DataSeeder.cs`: fake data seeder
-* `Shared/`: shared resources (view models, classes, constants, etc.)
-* `appsettings(.*).json`: configuration files
-* `Program.cs`: application startup file
+* `Controllers/`: controllers implementing business logics as public and private API endpoints
+* `Data/Migrations/`: [Entity Framework](https://learn.microsoft.com/aspnet/entity-framework) database migrations
+* `Data/Models/`: database model implementation as entities
+* `Shared/`: shared resources
+* `appsettings.*.json`: configuration files
 
 ## Startup (for development)
 
 ### Setup
 
-1. Install .NET Core (if necessary)
+1. Install [.NET Core](https://dotnet.microsoft.com/download/dotnet) (if necessary)
 
-2. If you don't have any PostgreSQL instance to host the development database, you can create one inside a Docker
-   container by running the following command in a terminal:
-    ```shell
-    $ docker run --name postgres-dev -e POSTGRES_PASSWORD=<user> -e POSTGRES_USER=<password> -d postgres
-    ```
-   Replace `<user>` and `<password>` with the database credentials of your choice
+2. Set up a [PostgreSQL](https://www.postgresql.org) instance to host the database (you can quickly set up a [dockerized database](https://hub.docker.com/_/postgres#start-a-postgres-instance))
 
-3. Create a copy of the `appsettings.json` file as `appsettings.Development.json`
+3. At the project's root, create a copy of the `appsettings.json` file as `appsettings.Development.json`
 
-4. Provide a value for the following fields in the created file:
-    * `ConnectionStrings`:
-        * `Default`: application PostgreSQL database connection string
-            * Specify the user and password credentials you provided to create the containerized database
-            * Specify `localhost` for the host and `5432` for the port
-    * `AllowedOrigins`: origins allowed to send request to the API
-        * Specify `http://localhost:4200`
-    * `SeedDatabase`: if the database should be filled with fake data
-    * `YouTubeApi`:
-        * `ApiKey`: Google Cloud (YouTube) [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
-        * `ApplicationName`: Google Cloud application name
+4. Specify a value for each of the following fields in the created file:
+   * `ConnectionStrings:Default`: connection string to connect to your PostgreSQL instance
+   * `AllowedOrigins`: origins allowed to send request to the API → specify `http://localhost:4200`
+   * `SeedDatabase`: if set to `true`, the database will be filled with fake generated data (on startup)
+   * `YouTubeApi:ApiKey`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
+   * `YouTubeApi:ApplicationName`: your Google Cloud application name
 
-5. Amusix's backend application uses Entity Framework ORM to implement the database model via entities and migrations
-
-   Run the command bellow at the backend project's root in a terminal to :
-    1. Create the Amusix database if it doesn't exist yet
-    2. Apply the latest migrations to the database
+5. Create the Amusix database if it doesn't exist and apply the latest migrations by running the following command at the project's root in a terminal:
 
     ```shell
     dotnet ef database update
@@ -83,34 +54,35 @@
 
 ### Run
 
-Run the following command at the backend project's root in a terminal to launch the application in a local development environment:
+Launch the application in a local development server by running the following command at the project's root in a terminal:
 
 ```shell
 dotnet run
 ```
 
-Access URL: http://localhost:5211
+> Access URL: http://localhost:5211
 
-## API documentation and testing with Swagger
+## Swagger UI
 
-### Overview
+When launching the application in a local development environment, all routes implemented by each controller are documented and can be tested via the configured Swagger interface.
 
-When launching the application in a local development environment, all available routes implemented by the controllers are documented and can be tested with the configured Swagger interface.
+<img alt="swagger UI" src="../docs/images/swagger.png" style="width: 750px"/>
 
-![swagger UI](../docs/images/swagger.png)
-
-Default access URL: http://localhost:5211/docs
+> Access URL: http://localhost:5211/docs
 
 ### Authenticate to use private routes
 
 Some routes are private and can't be accessed without authentication.
 
-1. Create a user account via the `/users/register` route (or use an existing one for the up-coming step)
+1. Create a user account via the `/users/register` route
 
-2. Use your credential to log in via the `/users/login` route -> If the authentication succeed, a private `accessToken` will be returned
+2. Use your credential to log in via the `/users/login` route -> if the authentication succeed, a private `accessToken` will be returned
 
 3. Click the "Authorize" button at the top right of the page
 
-4. In the displayed modal, enter `Bearer` followed by a blank space followed by the previously returned token, than click "Authorize" and close the modal
+4. In the displayed modal, enter `Bearer` followed by a blank space followed by the previously returned token, then click "Authorize" and close the modal
 
-5. You will now be able to request private routes (according to your user permissions)
+5. You will now be able to send request to private routes
+
+> [!NOTE]
+> Some routes might remain inaccessible depending on the permissions associated to your registered account.

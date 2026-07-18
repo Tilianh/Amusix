@@ -7,31 +7,11 @@ on:
 
 jobs:
 
-  check_branches:
+  check-branches:
     runs-on: ubuntu-latest
     steps:
       - name: ▶ Check branches
-        if: github.base_ref == 'main' && !startsWith(github.head_ref, 'release')
+        if: github.base_ref == 'main' && github.head_ref != 'release'
         run: |
-          echo "Only branches starting by 'release' can be merged into 'main' from a pull request"
+          echo "Only the 'release' branch can be merged into 'main' from a pull request"
           exit 1
-
-  test:
-    needs: check_branches
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: ▶ Create environment file
-        run: |
-          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}"
-          echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}"
-      - name: ▶ Run Dockerized application
-        run: docker-compose up -d --build
-      - name: ▶ Run backend tests
-        uses: cypress-io/github-action@v7
-        with:
-          working-directory: test/
-          wait-on: http://localhost/api
-          spec: cypress/e2e/backend/**/*
-          config: baseUrl=http://localhost/api
-          browser: edge

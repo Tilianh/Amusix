@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine@sha256:d8ee39817ca03a3757288e83c37ed73cc969a286c603b827c7cbe33add1c2d1c AS build
 WORKDIR /App
 
+ARG APP_BASE_URL
 ARG YOUTUBE_API_KEY
 ARG YOUTUBE_API_APP_NAME
 
@@ -12,9 +13,10 @@ RUN apk add jq
 
 # Set configuration (in temp file)
 RUN jq \
+    --arg appBaseUrl "$APP_BASE_URL" \
     --arg youtubeApiKey "$YOUTUBE_API_KEY" \
     --arg youtubeApiAppName "$YOUTUBE_API_APP_NAME" \
-    '.YouTubeApi.ApiKey = $youtubeApiKey | .YouTubeApi.ApplicationName = $youtubeApiAppName' \
+    '.AllowedOrigins = $appBaseUrl | .YouTubeApi.ApiKey = $youtubeApiKey | .YouTubeApi.ApplicationName = $youtubeApiAppName' \
     appsettings.Production.json > temp-config
 
 # Update configuration

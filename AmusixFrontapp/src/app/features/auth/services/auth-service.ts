@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { RegisterUserForm } from '../models/register-user-form';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import * as environment from '../../../../environments/environment.json';
 import { LoginUserForm } from '../models/login-user-form';
 import { AmxServiceBase } from '../../../shared/services/amx-service-base';
 
