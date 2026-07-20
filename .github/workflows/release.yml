@@ -34,6 +34,7 @@ jobs:
           token: '${{ github.token }}'
 
   deploy:
+    environment: release
     runs-on: ubuntu-latest
     steps:
       - name: ▶ Deploy build (using SSH connection)
