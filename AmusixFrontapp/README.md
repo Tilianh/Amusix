@@ -67,3 +67,11 @@ ng serve
 ```
 
 > Access URL: http://localhost:4200
+
+## Technical documentation
+
+A detailed technical documentation (architecture, component details, routes and way more) was generated using [compodoc](https://compodoc.app/) and deployed on GitHub Pages.
+
+<img alt="compodoc" src="../docs/images/screenshots/compodoc.png" style="width: 750px; border: 1px solid gainsboro"/>
+
+> Access URL: https://tilianh.github.io/Amusix/docs/frontend
