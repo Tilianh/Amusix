@@ -1,0 +1,83 @@
+@if (isLoading()) {
+  <app-loading [loadingText]="'Registering...'"/>
+} @else {
+  <app-auth-page [title]="'Register to Amusix'">
+    <form class="d-flex flex-column align-items-center w-100 gap-3" (submit)="registerUserAsync()">
+
+      <!-- Username -->
+      <div class="form-floating w-100">
+        <input [formField]="registerForm.userName"
+               [class.is-invalid]="registerForm.userName().dirty() && registerForm.userName().invalid()"
+               type="text"
+               class="form-control"
+               id="usernameInput"
+               placeholder="Username">
+        <label for="usernameInput">Username*</label>
+        @if (registerForm.userName().dirty() && registerForm.userName().invalid()) {
+          <div class="invalid-feedback">Username requirements:
+            <ul>
+              <li>At least 5 characters long</li>
+              <li>Only lowercase characters</li>
+              <li>At least one lowercase alphabetic character</li>
+              <li>Can contain digits</li>
+              <li>Can contain "-" and "_"</li>
+            </ul>
+          </div>
+        }
+      </div>
+
+      <!-- Display name -->
+      <div class="form-floating w-100">
+        <input [formField]="registerForm.displayName"
+               type="text"
+               class="form-control"
+               id="displayNameInput"
+               placeholder="Display name">
+        <label for="displayNameInput">Display name</label>
+      </div>
+
+      <!-- Password -->
+      <div class="form-floating w-100">
+        <input [formField]="registerForm.password"
+               [class.is-invalid]="registerForm.password().dirty() && registerForm.password().invalid()"
+               type="password"
+               class="form-control"
+               id="passwordInput"
+               placeholder="Password">
+        <label for="passwordInput">Password*</label>
+        @if (registerForm.password().dirty() && registerForm.password().invalid()) {
+          <div class="invalid-feedback">Password requirements:
+            <ul>
+              <li>At least 6 characters long</li>
+              <li>At least one digit between 0 and 9</li>
+              <li>At least one uppercase character</li>
+              <li>At least one lowercase character</li>
+              <li>At least one special character</li>
+            </ul>
+          </div>
+        }
+      </div>
+
+      <!-- Confirm password -->
+      <div class="form-floating w-100">
+        <input [formField]="registerForm.confirmPassword"
+               [class.is-invalid]="registerForm.confirmPassword().dirty() && registerForm.confirmPassword().invalid()"
+               type="password"
+               class="form-control"
+               id="confirmPasswordInput"
+               placeholder="Confirm password">
+        <label for="confirmPasswordInput">Confirm password*</label>
+        @if (registerForm.confirmPassword().dirty() && registerForm.confirmPassword().invalid()) {
+          <div class="invalid-feedback">Passwords don't match</div>
+        }
+      </div>
+
+      <button type="submit" [disabled]="registerForm().invalid()"
+              class="btn btn-primary px-4 py-2">Register
+      </button>
+
+      <a routerLink="/login">Already have an account? Log in</a>
+
+    </form>
+  </app-auth-page>
+}

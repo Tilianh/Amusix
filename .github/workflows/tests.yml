@@ -1,0 +1,29 @@
+name: Test pull request code
+
+on:
+  pull_request:
+    branches:
+      - 'release'
+      - 'main'
+
+jobs:
+
+  test:
+    environment: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: ▶ Create environment file
+        run: |
+          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" > .env
+          echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
+      - name: ▶ Run dockerized application
+        run: docker compose up -d --build
+      - name: ▶ Run backend tests
+        uses: cypress-io/github-action@v7
+        with:
+          working-directory: tests/
+          wait-on: http://localhost:2026/api/
+          spec: cypress/e2e/backend/**/*
+          config: baseUrl=http://localhost:2026/api
+          browser: edge

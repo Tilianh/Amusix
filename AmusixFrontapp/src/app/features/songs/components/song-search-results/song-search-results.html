@@ -1,0 +1,28 @@
+<app-dynamic-paginated-list [itemSource]="(pageToken) => songService.searchSongsAsync(songSearchForm(), pageToken)"
+                  [headerTemplateRef]="headerTemplate"
+                  [itemTemplateRef]="songItemTemplate"
+                  [noItemText]="'No song was found for this search'"/>
+
+<ng-template #headerTemplate let-totalItemCount="totalItemCount">
+  <a routerLink="/my-playlists" class="btn btn-sm btn-outline-dark mb-3" style="width: fit-content">
+    <i class="bi bi-music-note-list"></i> My playlists
+  </a>
+  <div class="d-flex align-items-center gap-3">
+    <div>
+      <i class="bi bi-search text-primary"></i>
+      @if (totalItemCount <= 1000) {
+        {{ totalItemCount }} result(s)
+      } @else {
+        > 1000 results
+      }
+    </div>
+    <div class="text-muted">Sorted by relevance</div>
+  </div>
+</ng-template>
+
+<ng-template #songItemTemplate let-song="item">
+  <app-search-result-song-item [song]="song"
+                               (onAddToPlaylist)="addSongToPlaylist(song)"/>
+</ng-template>
+
+<app-add-playlist-song-modal #playlistAddModal/>

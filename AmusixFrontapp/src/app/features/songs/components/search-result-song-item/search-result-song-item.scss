@@ -1,0 +1,47 @@
+.song {
+  &.pc-screen {
+    transition-duration: 0.2s;
+
+    &:hover {
+      border-color: var(--bs-primary) !important;
+    }
+  }
+
+  &:hover {
+    .song-menu {
+      opacity: 1;
+    }
+  }
+
+  .song-menu {
+    opacity: 0;
+    background: linear-gradient(to right, transparent, white 15%);
+    transition-duration: 0.25s;
+
+    .bi.blink {
+      animation: blink 3s ease-in-out infinite;
+    }
+  }
+
+  .song-thumbnail {
+    position: relative;
+    min-width: 85px;
+    height: 85px;
+
+    & > img {
+      -webkit-user-drag: none;
+      object-fit: cover;
+      object-position: center;
+      object-view-box: inset(13%);
+    }
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

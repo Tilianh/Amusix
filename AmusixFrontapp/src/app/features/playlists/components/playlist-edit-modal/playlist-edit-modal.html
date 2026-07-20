@@ -1,0 +1,24 @@
+<app-modal #modal [title]="'Edit playlist'">
+  @if (isLoading()) {
+    <app-loading/>
+  } @else {
+    <form class="d-flex flex-column align-items-center w-100 gap-3" (submit)="savePlaylist()">
+
+      <!-- Playlist name -->
+      <div class="form-floating w-100">
+        <input [formField]="playlistForm.playlistName"
+               [class.is-invalid]="playlistForm.playlistName().dirty() && playlistForm.playlistName().invalid()"
+               type="text"
+               class="form-control"
+               id="playlistNameInput"
+               placeholder="Playlist name">
+        <label for="playlistNameInput">Playlist name*</label>
+        @if (playlistForm.playlistName().dirty() && playlistForm.playlistName().invalid()) {
+          <div class="invalid-feedback">This field is mandatory</div>
+        }
+      </div>
+
+      <button type="submit" [disabled]="playlistForm().invalid()" class="btn btn-primary px-4 py-2">Save</button>
+    </form>
+  }
+</app-modal>

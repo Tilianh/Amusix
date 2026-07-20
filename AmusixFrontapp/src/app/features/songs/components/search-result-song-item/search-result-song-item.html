@@ -1,0 +1,47 @@
+<div class="song d-flex align-items-center gap-3 rounded position-relative h-100"
+     [class.pc-screen]="!isPhoneScreen()"
+     [class.border]="!isPhoneScreen()"
+     [class.px-4]="!isPhoneScreen()"
+     [class.py-3]="!isPhoneScreen()">
+  <div class="song-thumbnail border rounded overflow-hidden d-flex justify-content-center align-items-center">
+    @if (song().thumbnailUrl && !isSongThumbnailNotFound()) {
+      @if (isSongThumbnailLoading()) {
+        <div class="spinner-border spinner-border-sm text-primary"></div>
+      }
+      <img [ngSrc]="song().thumbnailUrl"
+           [alt]="`song${song().ytbId}-image`"
+           [class.opacity-0]="isSongThumbnailLoading()"
+           (load)="isSongThumbnailLoading.set(false)"
+           (error)="isSongThumbnailNotFound.set(true)" fill/>
+    } @else {
+      <i class="bi bi-exclamation-triangle-fill text-muted opacity-50" style="font-size: 1.5em"></i>
+    }
+  </div>
+  <div class="d-flex flex-column gap-1 flex-grow-1">
+    <div class="line-truncate-2 fw-bold" [title]="song().name">{{ song().name }}</div>
+    <div class="d-flex justify-content-between align-items-end mt-n1">
+      <div class="small lh-sm">
+        By <b>{{ song().artistName }}</b><br>
+        Published {{ song().publishedAt | date: 'yyyy-MM-dd' }}
+      </div>
+      <div class="text-primary mt-n2">{{ formattedSongDuration() }}</div>
+    </div>
+  </div>
+  <div [class.pe-4]="!isPhoneScreen()"
+       class="song-menu position-absolute d-flex align-items-center gap-3 end-0 top-50 translate-middle-y py-4 ps-5 text-primary">
+    @if (!isSongBeingPlayed()) {
+      <i (click)="playSong()"
+         class="bi bi-play-fill cursor-pointer"
+         title="Play song"
+         style="font-size: 35px"></i>
+    } @else {
+      <i class="bi bi-headphones blink"
+         title="You're listening to this song"
+         style="font-size: 30px"></i>
+    }
+    <i (click)="onAddToPlaylist.emit()"
+       class="bi bi-plus-lg cursor-pointer"
+       title="Add song to another playlist"
+       style="font-size: 30px"></i>
+  </div>
+</div>

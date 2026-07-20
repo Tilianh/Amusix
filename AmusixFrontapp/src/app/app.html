@@ -1,0 +1,15 @@
+<div #app class="vw-100 vh-100 d-flex flex-column position-relative">
+  @if (showAppLayout()) {
+    <app-header/>
+    <div class="px-4 px-md-5 pt-5 flex-grow-1 overflow-auto">
+      <router-outlet/>
+    </div>
+    <app-song-player/>
+  } @else {
+    <div class="flex-grow-1 overflow-auto">
+      <router-outlet/>
+    </div>
+  }
+  <app-alert-display/>
+  <app-confirm-modal/>
+</div>

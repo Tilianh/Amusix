@@ -1,0 +1,22 @@
+.playlist {
+  &.pc-screen {
+    transition-duration: 0.2s;
+
+    &:hover {
+      border-color: var(--bs-primary) !important;
+    }
+  }
+
+  .playlist-thumbnail {
+    position: relative;
+    min-width: 85px;
+    height: 85px;
+
+    & > img {
+      -webkit-user-drag: none;
+      object-fit: cover;
+      object-position: center;
+      object-view-box: inset(13%);
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<div [routerLink]="`/my-playlists/${playlist().id}`"
+     class="playlist d-flex align-items-center gap-3 rounded cursor-pointer h-100"
+     [class.pc-screen]="!isPhoneScreen()"
+     [class.border]="!isPhoneScreen()"
+     [class.px-4]="!isPhoneScreen()"
+     [class.py-3]="!isPhoneScreen()">
+  @if (index() != undefined) {
+    <small class="text-muted pe-1"> {{ index()! + 1 }}</small>
+  }
+  <div class="playlist-thumbnail border rounded overflow-hidden d-flex justify-content-center align-items-center">
+    @if (playlist().thumbnailUrl && !isPlaylistThumbnailNotFound()) {
+      @if (isPlaylistThumbnailLoading()) {
+        <div class="spinner-border spinner-border-sm text-primary"></div>
+      }
+      <img [ngSrc]="playlist().thumbnailUrl"
+           [alt]="`playlist${playlist().id}-image`"
+           [class.opacity-0]="isPlaylistThumbnailLoading()"
+           (load)="isPlaylistThumbnailLoading.set(false)"
+           (error)="isPlaylistThumbnailNotFound.set(true)" fill/>
+    } @else {
+      <i class="bi bi-exclamation-triangle-fill text-muted opacity-50" style="font-size: 1.5em"></i>
+    }
+  </div>
+  <div class="d-flex flex-column flex-grow-1 gap-1">
+    <div class="line-truncate-2 fw-bold" [title]="playlist().name">{{ playlist().name }}</div>
+    <div class="small text-muted">Last updated {{ playlist().lastUpdatedAt | date: 'yyyy-MM-dd' }}</div>
+    <div class="small text-primary fw-bold">
+      {{ playlist().songCount }} <i class="bi bi-disc-fill"></i>
+    </div>
+  </div>
+</div>

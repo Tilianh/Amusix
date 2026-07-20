@@ -1,0 +1,162 @@
+<div #videoPlayer
+     id="videoPlayer"
+     class="position-absolute top-0 start-0 opacity-0"
+     style="pointer-events: none"></div>
+
+@switch (playerDisplayMode()) {
+  @case (SongPlayerState.MINIMIZED) {
+    <div class="position-absolute p-3 bottom-0 w-100 z-1"
+         style="max-width: 750px"
+         [class.start-50]="!isPhoneScreen()"
+         [class.translate-middle-x]="!isPhoneScreen()">
+      <div
+        class="d-flex align-items-center gap-3 bg-primary rounded text-white py-1 px-3">
+        <ng-container [ngTemplateOutlet]="pauseButton"/>
+        <ng-container [ngTemplateOutlet]="volumeControl"
+                      [ngTemplateOutletContext]="{muteButtonOnly: isPhoneScreen(), verticalDisplay: true}"/>
+        <ng-container [ngTemplateOutlet]="playerTimeline" [ngTemplateOutletContext]="{disabled: isPhoneScreen()}"/>
+        <i (click)="playerDisplayMode.set(SongPlayerState.FULL_SCREEN)"
+           class="bi bi-chevron-up cursor-pointer"
+           title="Full screen player"
+           style="font-size: 28px"></i>
+        <i (click)="closePlayer()"
+           class="bi bi-x-lg cursor-pointer"
+           title="Close player"
+           style="font-size: 28px"></i>
+      </div>
+    </div>
+  }
+  @case (SongPlayerState.FULL_SCREEN) {
+    <div
+      class="full-video-player position-absolute top-0 w-100 h-100 d-flex justify-content-center align-items-center z-2 p-4">
+
+      <!-- Corner buttons -->
+      <div class="position-absolute d-flex gap-3 top-0 end-0 m-3 text-white z-1">
+        <i (click)="playerDisplayMode.set(SongPlayerState.MINIMIZED)"
+           title="Minimize player"
+           class="bi bi-chevron-down cursor-pointer"
+           style="font-size: 30px"></i>
+        <i (click)="closePlayer()"
+           title="Close player"
+           class="bi bi-x-lg cursor-pointer"
+           style="font-size: 30px"></i>
+      </div>
+
+      <div class="d-flex flex-column align-items-center gap-5 w-100"
+           [class.disabled]="isLoading()"
+           style="max-width: 750px;">
+
+        <!-- Song thumbnail -->
+        <div class="song-thumbnail shadow rounded overflow-hidden d-flex justify-content-center align-items-center"
+             style="background-color: rgba(255, 255, 255, 0.75)">
+          @if (playedSong().thumbnailUrl && !isSongThumbnailNotFound()) {
+            @if (isSongThumbnailLoading()) {
+              <div class="spinner-border spinner-border-sm text-primary"></div>
+            }
+            <img [ngSrc]="playedSong().thumbnailUrl"
+                 [alt]="`song${playedSong().ytbId}-image`"
+                 [class.opacity-0]="isSongThumbnailLoading()"
+                 (load)="isSongThumbnailLoading.set(false)"
+                 (error)="isSongThumbnailNotFound.set(true)" fill priority/>
+          } @else {
+            <i class="bi bi-exclamation-triangle-fill text-muted opacity-50" style="font-size: 1.5em"></i>
+          }
+          @if (playedSong().status == SongStatus.NOT_VALID) {
+            <div class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center"
+                 style="background-color: rgba(255, 255, 255, 0.75)">
+              <i class="bi bi-exclamation-triangle-fill text-muted opacity-50" style="font-size: 1.5em"></i>
+            </div>
+          }
+        </div>
+
+        <!-- Song info -->
+        <div class="text-center text-white lh-sm">
+          <div class="fw-bold line-truncate-5 fs-5" [title]="playedSong().name">{{ playedSong().name }}</div>
+          <div class="mt-2">{{ playedSong().artistName }}</div>
+        </div>
+
+        <!-- Timeline + buttons -->
+        <div class="d-flex flex-column align-items-center text-white w-100 mt-n3">
+          <ng-container [ngTemplateOutlet]="pauseButton"/>
+          <ng-container [ngTemplateOutlet]="playerTimeline"/>
+          <div class="mt-4">
+            <ng-container [ngTemplateOutlet]="volumeControl"
+                          [ngTemplateOutletContext]="{verticalDisplay: false, alwaysShow: true}"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+}
+
+<ng-template #pauseButton>
+  <div class="d-flex justify-content-center align-items-center" style="max-width: 35px; height: 52px">
+    @switch (ytbPlayerState()) {
+      @case (PlayerStates.PLAYING) {
+        <i (click)="pauseSong()"
+           class="bi bi-pause-fill cursor-pointer"
+           title="Pause song"
+           style="font-size: 35px"></i>
+      }
+      @case (PlayerStates.PAUSED) {
+        <i (click)="resumeSong()"
+           class="bi bi-play-fill cursor-pointer"
+           title="Play song"
+           style="font-size: 35px"></i>
+      }
+      @case (PlayerStates.ENDED) {
+        <i (click)="restartSong()"
+           class="bi bi-arrow-counterclockwise cursor-pointer"
+           title="Restart song"
+           style="font-size: 35px"></i>
+      }
+      @default {
+        <div class="spinner-border" style="width: 35px; height: 35px"></div>
+      }
+    }
+  </div>
+</ng-template>
+
+<ng-template #volumeControl
+             let-muteButtonOnly="muteButtonOnly"
+             let-verticalDisplay="verticalDisplay">
+  <div class="volume position-relative d-flex align-items-center">
+    @if (isSongMuted() || songVolumePercentage() == 0) {
+      <i (click)="unmuteVolume()"
+         class="bi bi-volume-mute-fill cursor-pointer"
+         title="Volume"
+         style="font-size: 30px"></i>
+    } @else {
+      <i (click)="muteVolume()"
+         class="bi bi-volume-up-fill cursor-pointer"
+         title="Volume"
+         style="font-size: 30px"></i>
+    }
+    @if (!muteButtonOnly) {
+      <div class="volume-control bg-primary p-3 rounded"
+           [class.vertical]="verticalDisplay"
+           [class.horizontal]="!verticalDisplay">
+        <input (input)="changeVolume($any($event).target.value)"
+               [style.--volume-percentage]="songVolumePercentage()"
+               type="range" [value]="songVolumePercentage()"
+               min="0" max="100" step="1">
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #playerTimeline let-disabled="disabled">
+  <div class="d-flex align-items-center gap-2 w-100 text-white">
+    <div class="small">{{ songFormattedCurrentTime() }}</div>
+    <input (change)="changeSongTimestamp($any($event).target.value)"
+           (input)="updateTimelineDisplay($any($event).target.value)"
+           [max]="songTotalDuration()" min="0" step="0.01"
+           [disabled]="disabled"
+           [style.--song-progression]="songProgression()"
+           type="range"
+           class="timeline w-100"
+           style="height: 8px"/>
+    <div class="small">{{ songFormattedTotalDuration() }}</div>
+  </div>
+</ng-template>

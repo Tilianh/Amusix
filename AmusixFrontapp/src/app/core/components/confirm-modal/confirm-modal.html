@@ -1,0 +1,9 @@
+<app-modal #confirmModal [closable]="false">
+  <div class="d-flex flex-column align-items-center gap-3">
+    <div class="py-2">{{ confirmation().text }}</div>
+    <div>
+      <button (click)="confirm()" class="btn btn-primary me-3">Confirm</button>
+      <button (click)="confirmModal.close()" class="btn btn-outline-primary">Cancel</button>
+    </div>
+  </div>
+</app-modal>
