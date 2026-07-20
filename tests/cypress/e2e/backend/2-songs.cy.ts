@@ -15,7 +15,7 @@ function verifySongInPlaylist(playlistId: string, songId: string, position = 1) 
   });
 }
 
-before(() => cy.login('test', 'Test$4321'));
+before(() => cy.login('test_', 'Test$4321'));
 
 describe('Make song search', () => {
   it('Get songs without access token', () => {

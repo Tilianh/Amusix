@@ -1,6 +1,6 @@
 import { TestVariables } from '../../support/test-variables';
 
-before(() => cy.login('test', 'Test$4321'));
+before(() => cy.login('test_', 'Test$4321'));
 
 describe('Get current user playlists', () => {
   it('Get playlists without access token', () => {

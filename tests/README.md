@@ -77,4 +77,4 @@ npm run test -- --spec "cypress/e2e/backend/**/*" --config "baseUrl=<backend-bas
 Replace `api-base-url` by the base URL of the backend API to test:
 
 * Local development environment: `http://localhost:5211`
-* Containerized application: `http://localhost/api`
+* Containerized application: `http://localhost:2026/api`

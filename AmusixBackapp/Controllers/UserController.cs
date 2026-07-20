@@ -29,11 +29,16 @@ public class UserController(
     /// <param name="userForm">User to register.</param>
     [HttpPost("register"), AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status409Conflict, Description = "Username already taken")]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Description = "Insufficient password strength")]
+    [ProducesResponseType(
+        StatusCodes.Status403Forbidden,
+        Description = "Invalid username or insufficient password strength")]
     [ProducesResponseType(StatusCodes.Status201Created, Description = "New user registered")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> RegisterUserAsync(RegisterUserFormVm userForm)
     {
+        if (!AppRegexes.UsernameRegex().IsMatch(userForm.UserName))
+            return JsonResult(StatusCodes.Status403Forbidden, new { Message = "Invalid username" });
+
         if (await userManager.FindByNameAsync(userForm.UserName) != null)
             return JsonResult(StatusCodes.Status409Conflict, new { Message = "Username already taken" });
 
@@ -146,7 +151,7 @@ public class UserController(
             }
             return JsonResult(StatusCodes.Status500InternalServerError, new { Error = error });
         }
-        
+
         if (userForm.OldPassword == userForm.NewPassword)
             return JsonResult(StatusCodes.Status409Conflict,
                 new { Message = "New password and old password can't be the same" });

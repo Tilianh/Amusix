@@ -1,9 +1,17 @@
 describe('Register user', () => {
+  it('Register user with invalid username', () => {
+    cy.request({
+      method: 'POST',
+      url: '/users/register',
+      body: {userName: 'a', userDisplayName: 'Test', password: 'test'},
+      failOnStatusCode: false
+    }).then(response => expect(response.status).to.equal(403));
+  });
   it('Register user with weak password', () => {
     cy.request({
       method: 'POST',
       url: '/users/register',
-      body: {userName: 'test', userDisplayName: 'Test', password: 'test'},
+      body: {userName: 'test_', userDisplayName: 'Test', password: 'test'},
       failOnStatusCode: false
     }).then(response => expect(response.status).to.equal(403));
   });
@@ -11,14 +19,14 @@ describe('Register user', () => {
     cy.request({
       method: 'POST',
       url: '/users/register',
-      body: {userName: 'test', userDisplayName: 'Test', password: 'Test$1234'}
+      body: {userName: 'test_', userDisplayName: 'Test', password: 'Test$1234'}
     }).then(response => expect(response.status).to.equal(201));
   });
   it('Register duplicated user', () => {
     cy.request({
       method: 'POST',
       url: '/users/register',
-      body: {userName: 'test', password: 'test'},
+      body: {userName: 'test_', password: 'test'},
       failOnStatusCode: false
     }).then(response => expect(response.status).to.equal(409));
   });
@@ -37,12 +45,12 @@ describe('Log in', () => {
     cy.request({
       method: 'POST',
       url: '/users/login',
-      body: {userName: 'test', password: 'test'},
+      body: {userName: 'test_', password: 'test'},
       failOnStatusCode: false
     }).then(response => expect(response.status).to.equal(401));
   });
   it('Log in', () => {
-    cy.login('test', 'Test$1234');
+    cy.login('test_', 'Test$1234');
   });
 });
 
@@ -53,7 +61,7 @@ describe('Get current user', () => {
   it('Get current user', () => {
     cy.tryRequest('/users/current', 'GET').then(response => {
       expect(response.status).to.equal(200);
-      expect(response.body.userName).to.equal('test');
+      expect(response.body.userName).to.equal('test_');
     });
   });
 });
@@ -91,6 +99,6 @@ describe('Change current user password', () => {
     ).then(response => expect(response.status).to.equal(200));
   });
   it('Log in again', () => {
-    cy.login('test', 'Test$4321');
+    cy.login('test_', 'Test$4321');
   });
 });

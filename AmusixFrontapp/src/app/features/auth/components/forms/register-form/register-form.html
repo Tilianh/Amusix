@@ -14,7 +14,15 @@
                placeholder="Username">
         <label for="usernameInput">Username*</label>
         @if (registerForm.username().dirty() && registerForm.username().invalid()) {
-          <div class="invalid-feedback">This field is mandatory</div>
+          <div class="invalid-feedback">Username requirements:
+            <ul>
+              <li>At least 5 characters long</li>
+              <li>Only lowercase characters</li>
+              <li>At least one lowercase alphabetic character</li>
+              <li>Can contain digits</li>
+              <li>Can contain "-" and "_"</li>
+            </ul>
+          </div>
         }
       </div>
 

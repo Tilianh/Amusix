@@ -26,7 +26,7 @@ Wanna put your hands in Amusix's code? Here are the steps to follow for code con
 3. Enhancements, fixes → code what you have in mind
 
 4. Implement tests in `test/`:
-    * Implement the tests that cover your code to prevent regression
+    * Implement or update the tests that cover your code to prevent regression
     * Check the [test directory `README.md` file](tests/README.md) to know where to add your tests and how to locally run them
     * Test your tests and your code to ensure everything works fine
 
