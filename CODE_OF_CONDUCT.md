@@ -1,0 +1,9 @@
+# Code of conduct
+
+**Have some common sens, be respectful and considerate.**
+
+Keep in mind everybody might not have your personal knowledge of things, so try to keep it cool whenever you might be asked to elaborate on things.
+
+Any behavior aimed at tempering with the members of this community will be sanctioned.
+
+Thanks for your understanding!

@@ -1,0 +1,26 @@
+@if (isLoading()) {
+  <app-loading/>
+} @else {
+  <a routerLink="/my-playlists" class="btn btn-sm btn-outline-dark mb-3" style="width: fit-content">
+    <i class="bi bi-music-note-list"></i> My playlists
+  </a>
+  <h1 class="fw-bold mb-3">My profile</h1>
+  <div class="d-flex gap-3 align-items-center">
+    <i class="bi bi-person-circle" style="font-size: 50px"></i>
+    <div class="">
+      <h4 class="fw-bold mb-0">{{ userInfo().displayName ? userInfo().displayName : userInfo().userName }}</h4>
+      @if (userInfo().displayName) {
+        <div>{{ userInfo().userName }}</div>
+      }
+    </div>
+  </div>
+  <div class="text-muted">Account registered {{ userInfo().createdAt | date: 'yyyy-MM-dd' }}</div>
+  <div class="d-flex gap-3 mt-4">
+    <button (click)="logout()" class="btn btn-primary">Log out</button>
+    <button (click)="passwordChangeModal.open()" class="btn btn-outline-primary">
+      <i class="bi bi-key-fill"></i> Change password
+    </button>
+  </div>
+}
+
+<app-password-change-modal #passwordChangeModal/>

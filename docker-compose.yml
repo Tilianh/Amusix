@@ -1,0 +1,59 @@
+name: amusix
+services:
+
+  pgdb:
+    image: postgres:18-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: amx-database
+    restart: unless-stopped
+    stop_grace_period: 5s
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      PGPORT: 5432
+    volumes:
+      - amx-pgdb-volume:/var/lib/postgresql
+
+  backend:
+    build:
+      context: AmusixBackapp/
+      args:
+        APP_BASE_URL: ${APP_BASE_URL:-http://localhost:2026}
+        YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+        YOUTUBE_API_APP_NAME: ${YOUTUBE_API_APP_NAME}
+    container_name: amx-api
+    restart: unless-stopped
+    stop_grace_period: 5s
+    ports:
+      - ":8080"
+    depends_on:
+      - pgdb
+
+  frontend:
+    build:
+      context: AmusixFrontapp/
+      args:
+        APP_BASE_URL: ${APP_BASE_URL:-http://localhost:2026}
+    container_name: amx-frontend
+    restart: unless-stopped
+    stop_grace_period: 5s
+    ports:
+      - ":80"
+    depends_on:
+      - backend
+
+  proxy:
+    build:
+      context: proxy/
+    container_name: amx-proxy
+    restart: unless-stopped
+    stop_grace_period: 5s
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "2026:80"
+
+volumes:
+  amx-pgdb-volume:

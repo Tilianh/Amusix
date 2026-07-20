@@ -1,0 +1,4 @@
+bin/
+obj/
+AmusixBackapp.sln.DotSettings.user
+appsettings.Development.json

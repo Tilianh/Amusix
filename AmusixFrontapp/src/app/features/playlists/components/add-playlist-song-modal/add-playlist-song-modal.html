@@ -1,0 +1,104 @@
+<app-modal #modal [title]="'Add this song to a playlist'">
+  @if (isLoading()) {
+    <app-loading/>
+  } @else {
+    @if (filteredPlaylists().length) {
+      <ul class="nav nav-tabs mb-4 border-0 gap-3 justify-content-center" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="btn btn-outline-primary active"
+                  id="home-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#existingPlaylistTab"
+                  type="button"
+                  role="tab"
+                  aria-controls="existingPlaylistTab"
+                  aria-selected="true">
+            Existing playlist
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="btn btn-outline-primary"
+                  id="profile-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#newPlaylistTab"
+                  type="button"
+                  role="tab"
+                  aria-controls="newPlaylistTab"
+                  aria-selected="false">
+            New playlist
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active show" id="existingPlaylistTab" role="tabpanel" tabindex="0">
+          <ng-container [ngTemplateOutlet]="existingPlaylistsTab"/>
+        </div>
+        <div class="tab-pane" id="newPlaylistTab" role="tabpanel" tabindex="0">
+          <ng-container [ngTemplateOutlet]="newPlaylistTab"/>
+        </div>
+      </div>
+    } @else {
+      <ng-container [ngTemplateOutlet]="newPlaylistTab"/>
+    }
+  }
+</app-modal>
+
+<ng-template #existingPlaylistsTab>
+  <div class="d-flex flex-column align-items-center w-100 gap-3">
+    <div class="w-100 border rounded cursor-pointer">
+      <div (click)="onPlaylistSelectClick()"
+           class="d-flex justify-content-between align-items-center gap-3 py-2 px-3">
+        @if (selectedPlaylist()) {
+          <app-playlist-select-item [playlist]="selectedPlaylist()!" [disabled]="true"/>
+        } @else {
+          <div class="text-muted">Select playlist</div>
+        }
+        <i class="bi px-2 text-muted"
+           [class.bi-chevron-up]="!showPlaylistOptions()"
+           [class.bi-chevron-down]="showPlaylistOptions()"
+           style="font-size: 25px"></i>
+      </div>
+      @if (showPlaylistOptions()) {
+        <div class="overflow-auto border-top" style="max-height: 275px">
+          @for (playlist of filteredPlaylists(); track playlist.id) {
+            <app-playlist-select-item [playlist]="playlist"
+                                      (onClicked)="setSelectedPlaylist(playlist)"
+                                      [selected]="selectedPlaylist()?.id == playlist.id"
+                                      [id]="`playlistOption${playlist.id}`"/>
+          }
+          @if (!areAllPlaylistsLoaded()) {
+            <div (click)="loadMorePlaylists()"
+                 class="text-primary text-center text-decoration-underline py-2">Load more
+            </div>
+          }
+        </div>
+      }
+    </div>
+    <button (click)="saveExistingPlaylist()" [disabled]="!selectedPlaylist()" class="btn btn-primary px-4 py-2">
+      Add song to playlist
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #newPlaylistTab>
+  <form class="d-flex flex-column align-items-center w-100 gap-3" (submit)="saveNewPlaylist()">
+
+    <!-- Playlist name -->
+    <div class="form-floating w-100">
+      <input [formField]="playlistForm.playlistName"
+             [class.is-invalid]="playlistForm.playlistName().dirty() && playlistForm.playlistName().invalid()"
+             type="text"
+             class="form-control"
+             id="playlistNameInput"
+             placeholder="Playlist name">
+      <label for="playlistNameInput">Playlist name*</label>
+      @if (playlistForm.playlistName().dirty() && playlistForm.playlistName().invalid()) {
+        <div class="invalid-feedback">This field is mandatory</div>
+      }
+    </div>
+
+    <button type="submit" [disabled]="playlistForm().invalid()" class="btn btn-primary px-4 py-2">
+      Add song to new playlist
+    </button>
+  </form>
+</ng-template>

@@ -1,0 +1,11 @@
+<div class="d-flex justify-content-center px-4 py-3 border-bottom">
+  <form (submit)="searchSongs()"
+        class="d-flex align-items-center flex-grow-1 gap-3"
+        style="max-width: 500px">
+    <input [formField]="searchForm.searchText"
+           class="form-control flex-grow-1"
+           type="search"
+           placeholder="Search for songs..."/>
+    <button [disabled]="searchForm().invalid()" class="btn btn-primary" type="submit">Search</button>
+  </form>
+</div>

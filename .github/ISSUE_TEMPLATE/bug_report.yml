@@ -1,0 +1,74 @@
+name: Bug report
+description: Report a bug you encountered with the application code.
+title: "[Bug] "
+labels: [ "Bug report" ]
+body:
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Describe the behavior you were expecting
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the bug that you encountered
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: How bad would you rate this bug
+      multiple: false
+      options:
+        - Minor
+        - Medium
+        - Critic
+    validations:
+      required: true
+
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Upload screenshots
+      description: Add screenshots to show the bug you encountered (optional)
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Describe the steps to reproduce the bug
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Amusix version
+      description: Enter in which version of Amusix you encountered the bug
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-details
+    attributes:
+      label: Additional details
+      description: Add details to the report (optional)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of conduct
+      description: By submitting this issue, you agree to follow our [code of conduct](https://github.com/Tilianh/Amusix/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's code of conduct
+          required: true

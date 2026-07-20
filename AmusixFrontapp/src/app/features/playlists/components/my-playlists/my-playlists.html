@@ -1,0 +1,15 @@
+<app-dynamic-paginated-list [itemSource]="(pageToken) => playlistService.getCurrentUserPlaylistsAsync(pageToken)"
+                  [headerTemplateRef]="headerTemplate"
+                  [itemTemplateRef]="playlistItemTemplate"
+                  [noItemText]="'You have no playlist yet, search songs to add to a new playlist'"/>
+
+<ng-template #headerTemplate let-totalItemCount="totalItemCount">
+  <div class="d-flex align-items-center gap-3">
+    <h1 class="fw-bold mb-0">My playlists</h1>
+    <div class="badge rounded-pill bg-primary">{{ totalItemCount }}</div>
+  </div>
+</ng-template>
+
+<ng-template #playlistItemTemplate let-playlist="item" let-index="index">
+  <app-playlist-item [playlist]="playlist" [index]="index"/>
+</ng-template>

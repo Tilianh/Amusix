@@ -1,0 +1,51 @@
+@if (isLoading()) {
+  <app-loading class="mt-n5"/>
+} @else {
+  <app-dynamic-paginated-list [itemSource]="(pageToken) => playlistService.getPlaylistSongsAsync(playlist().id, pageToken)"
+                    [headerTemplateRef]="headerTemplate"
+                    [itemTemplateRef]="songItemTemplate"
+                    [noItemText]="'This playlist is empty'"/>
+}
+
+<ng-template #headerTemplate let-totalItemCount="totalItemCount">
+  <a routerLink="/my-playlists" class="btn btn-sm btn-outline-dark mb-3" style="width: fit-content">
+    <i class="bi bi-music-note-list"></i> My playlists
+  </a>
+  <h2 class="fw-bold mb-3 mb-md-2 line-truncate-3">{{ playlist().name }}</h2>
+  <div class="d-flex align-items-center gap-3">
+    <div><i class="bi bi-disc-fill text-primary"></i> {{ totalItemCount }} song(s)</div>
+    @if (!isPhoneScreen()) {
+      <div class="text-muted">Last updated {{ playlist().lastUpdatedAt | date: 'yyyy-MM-dd' }}</div>
+    }
+    <button (click)="playlistInfoModal.open()"
+            title="Playlist information"
+            class="btn btn-primary rounded-circle px-2 py-1">
+      <i class="bi bi-info-lg text-white"></i>
+    </button>
+    <button (click)="playlistEditModal.open(playlist())"
+            title="Edit playlist"
+            class="btn btn-primary rounded-circle px-2 py-1">
+      <i class="bi bi-pencil-fill text-white"></i>
+    </button>
+    <button (click)="deletePlaylist()"
+            title="Delete playlist"
+            class="btn btn-primary rounded-circle px-2 py-1">
+      <i class="bi bi-trash3-fill text-white"></i>
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #songItemTemplate let-song="item" let-index="index">
+  <app-playlist-song-item [song]="song"
+                          [index]="index"
+                          (onRemoved)="ngOnInit()"
+                          (onAddToPlaylist)="playlistAddModal.openAsync(song, playlist().id)"/>
+</ng-template>
+
+<app-modal #playlistInfoModal [title]="'Playlist information'">
+  <div class="text-muted mb-3">Created {{ playlist().createdAt | date: 'yyyy-MM-dd' }}</div>
+  <div class="text-muted">Last updated {{ playlist().lastUpdatedAt | date: 'yyyy-MM-dd' }}</div>
+</app-modal>
+
+<app-playlist-edit-modal #playlistEditModal (onUpdated)="ngOnInit()"/>
+<app-add-playlist-song-modal #playlistAddModal/>
