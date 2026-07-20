@@ -62,10 +62,10 @@ When the pull request is accepted and all the changes are merged into `main`, th
 
 ### GitHub Actions worfklow chart
 
-<img alt="GitHub Actions workflows" src="docs/images/github_actions_workflows.svg" width="750"/>
+<img alt="GitHub Actions workflows" src="docs/images/diagrams/github_actions_workflows.svg" width="750"/>
 
 ### Version numbering
 
 Here's an explanation of how what the digits mean for each version of the application:
 
-<img alt="version numbering" src="docs/images/version_numbering.svg" width="175"/>
+<img alt="version numbering" src="docs/images/diagrams/version_numbering.svg" width="175"/>

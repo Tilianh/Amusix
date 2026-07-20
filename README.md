@@ -26,7 +26,7 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
 
 ### Diagram
 
-<img alt="architecture" src="docs/images/architecture.svg" width="750"/>
+<img alt="architecture" src="docs/images/diagrams/architecture.svg" width="750"/>
 
 * The dockerized application is deployed on an [Ubuntu](https://ubuntu.com/) server
 * An [Apache](https://httpd.apache.org/) proxy on the server redirects user requests to the application's Nginx proxy

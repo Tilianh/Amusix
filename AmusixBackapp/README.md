@@ -66,7 +66,7 @@ dotnet run
 
 When launching the application in a local development environment, all routes implemented by each controller are documented and can be tested via the configured Swagger interface.
 
-<img alt="swagger UI" src="../docs/images/swagger.png" style="width: 750px"/>
+<img alt="swagger UI" src="../docs/images/screenshots/swagger.png" style="width: 750px"/>
 
 > Access URL: http://localhost:5211/docs
 

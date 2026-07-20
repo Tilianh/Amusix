@@ -20,12 +20,12 @@ builder.Services.AddRateLimiter(options =>
     // Each user is limited to 10 requests per minutes per route per method
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: $"{httpContext.User.Identity!.Name}-{httpContext.Request.Host}-{httpContext.Request.IsHttps}",
+            partitionKey: $"{httpContext.User.Identity!.Name}-{httpContext.Request.Path}-{httpContext.Request.Method}",
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
                 PermitLimit = 10,
-                QueueLimit = 0,
+                QueueLimit = 10,
                 Window = TimeSpan.FromMinutes(1)
             }));
 });
@@ -99,6 +99,7 @@ app.UseCors(options =>
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseRateLimiter();
 
 // Global exception handler
 app.UseExceptionHandler(exceptionHandlerApp =>
