@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.RateLimiting;
 using AmusixBackapp.Data;
 using AmusixBackapp.Data.Models;
@@ -13,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 #region service registration
 
 builder.Services.AddControllers();
+
+// Logs
+builder.Services.AddLogging(x =>
+    x.AddJsonConsole(y => y.JsonWriterOptions = new JsonWriterOptions { Indented = true }));
 
 // Rate limiter
 builder.Services.AddRateLimiter(options =>
@@ -96,7 +101,6 @@ app.UseCors(options =>
     options.AllowAnyMethod()
         .AllowAnyHeader()
         .WithOrigins(app.Configuration.GetValue<string>("AllowedOrigins") ?? "*"));
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.UseRateLimiter();
