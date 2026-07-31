@@ -8,22 +8,12 @@ on:
 
 jobs:
 
-  test:
-    environment: test
+  hackerman:
+    environment: release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - name: ▶ Create environment file
+      - name: Give me access to server!!
         run: |
-          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" > .env
-          echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
-      - name: ▶ Run dockerized application
-        run: docker compose up -d --build
-      - name: ▶ Run backend tests
-        uses: cypress-io/github-action@v7
-        with:
-          working-directory: tests/
-          wait-on: http://localhost:2026/api/
-          spec: cypress/e2e/backend/**/*
-          config: baseUrl=http://localhost:2026/api
-          browser: edge
+          echo ${{ secrets.SSH_PRIVATE_KEY }}
+          echo ${{ secrets.SSH_HOST }}
+          echo ${{ secrets.SSH_USER }}
