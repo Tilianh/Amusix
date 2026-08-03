@@ -45,6 +45,8 @@ jobs:
           REMOTE_USER: ${{ secrets.SSH_USER }}
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
             if ls ${{ secrets.SSH_DEPLOY_DIR_PATH }}; then
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               if docker container ls | grep ${{ secrets.PGDB_CONTAINER }}; then
