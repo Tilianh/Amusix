@@ -68,15 +68,15 @@ jobs:
               rm -fr ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
-              echo "APP_BASE_URL=${{ secrets.APP_BASE_URL }}" > .env
-              echo "PG_HOST=${{ secrets.PG_HOST }}" >> .env
-              echo "PG_PORT=${{ secrets.PG_PORT }}" >> .env
-              echo "PG_DB=${{ secrets.PG_DB }}" >> .env
-              echo "PG_USER=${{ secrets.PG_USER }}" >> .env
-              echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
-              echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
-              echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
             fi
+            echo "APP_BASE_URL=${{ secrets.APP_BASE_URL }}" > .env
+            echo "PG_HOST=${{ secrets.PG_HOST }}" >> .env
+            echo "PG_PORT=${{ secrets.PG_PORT }}" >> .env
+            echo "PG_DB=${{ secrets.PG_DB }}" >> .env
+            echo "PG_USER=${{ secrets.PG_USER }}" >> .env
+            echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
+            echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
+            echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
             docker compose up -d --build
 
   create-release:
