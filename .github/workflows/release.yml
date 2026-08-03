@@ -71,7 +71,7 @@ jobs:
               mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
             fi
-            echo "APP_BASE_URL=${{ secrets.APP_BASE_URL }}" > .env
+            echo "APP_BASE_URL=${{ vars.APP_BASE_URL }}" > .env
             echo "PG_HOST=${{ secrets.PG_HOST }}" >> .env
             echo "PG_PORT=${{ secrets.PG_PORT }}" >> .env
             echo "PG_DB=${{ secrets.PG_DB }}" >> .env
