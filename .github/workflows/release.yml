@@ -56,10 +56,14 @@ jobs:
                 rm -rf ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/
                 docker exec ${{ secrets.PGDB_CONTAINER }} rm -rf pgdb_backups
               fi
+              git config user.name github-actions[bot]
+              git config user.email 41898282+github-actions[bot]@users.noreply.github.com
               git pull
             else
               mkdir -p ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}/..
+              git config user.name github-actions[bot]
+              git config user.email 41898282+github-actions[bot]@users.noreply.github.com
               git clone ${{ github.server_url }}/${{ github.repository }}
               rm -fr ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
