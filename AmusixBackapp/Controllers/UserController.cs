@@ -15,11 +15,13 @@ namespace AmusixBackapp.Controllers;
 /// <param name="signInManager"></param>
 /// <param name="userManager"></param>
 /// <param name="db"></param>
+/// <param name="logger"></param>
 [ApiController, Route("users")]
 public class UserController(
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager,
-    AppDbContext db) : AmxControllerBase
+    AppDbContext db,
+    ILogger<string> logger) : AmxControllerBase
 {
     #region authentication
 
@@ -67,6 +69,8 @@ public class UserController(
         await userManager.AddToRoleAsync(userDb, AppRoles.User);
 
         await transaction.CommitAsync();
+        
+        logger.LogInformation($"User {userDb.UserName} registered");
         return JsonResult(StatusCodes.Status201Created, new { Message = "New user registered" });
     }
 
@@ -89,9 +93,14 @@ public class UserController(
         signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
         var result = await signInManager.PasswordSignInAsync(userDb, userForm.Password, false, false);
 
-        return result.Succeeded
-            ? new EmptyResult()
-            : JsonResult(StatusCodes.Status401Unauthorized, new { Message = "Invalid password" });
+        if (result.Succeeded)
+        {
+            logger.LogInformation($"User {userDb.UserName} logged in");
+            return new EmptyResult();
+        }
+        
+        logger.LogWarning($"User {userDb.UserName} tried to log in with the wrong password");
+        return JsonResult(StatusCodes.Status401Unauthorized, new { Message = "Invalid password" });
     }
 
     #endregion
@@ -138,7 +147,10 @@ public class UserController(
         var userDb = (await userManager.GetUserAsync(User))!;
 
         if (!await userManager.CheckPasswordAsync(userDb, userForm.OldPassword))
+        {
+            logger.LogWarning($"User {userDb.UserName} tried to change password with invalid password");
             return JsonResult(StatusCodes.Status403Forbidden, new { Message = "Old password is not valid" });
+        }
 
         var result = await userManager.ChangePasswordAsync(userDb, userForm.OldPassword, userForm.NewPassword);
 
@@ -156,6 +168,7 @@ public class UserController(
             return JsonResult(StatusCodes.Status409Conflict,
                 new { Message = "New password and old password can't be the same" });
 
+        logger.LogInformation($"User {userDb.UserName} changed their password");
         return JsonResult(StatusCodes.Status200OK, new { Message = "Password updated" });
     }
 

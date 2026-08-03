@@ -34,6 +34,7 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
     *  `/` → redirects to the frontend
     *  `/api/` → redirects to the API
 * The application's backend manages requests with the database and the YouTube API (used to retrieve song metadata)
+* Metrics and logs about the Docker architecture can be visualized via a [Grafana](https://grafana.com/) monitoring application
 
 > [!NOTE]
 > Other applications were already hosted on the server and served using Apache before Amusix's deployment.
@@ -45,7 +46,6 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
 * [`AmusixBackapp/`](AmusixBackapp): backend application
 * [`AmusixFrontapp/`](AmusixFrontapp): frontend application
 * `docs/`: repo documentation
-* `proxy/`: proxy (for containerization)
 * [`tests/`](tests): automatized tests (for CI)
 
 ## Startup (with Docker)
@@ -59,13 +59,23 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
 
 2. Create a `.env` file at the repo's root with the following content:
     ``` apacheconf
+    PG_HOST=
+    PG_PORT=
+    PG_DB=
+    PG_USER=
+    PG_PASSWORD=
     YOUTUBE_API_KEY=
     YOUTUBE_API_APP_NAME=
     ```
 
 3. Specify a value for each fields in the created file:
-    * `YOUTUBE_API_KEY`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
-    * `YOUTUBE_API_APP_NAME`: your Google Cloud application name
+   * `PG_HOST`: PostgreSQL connection host (or `host.docker.internal` if you use an internal database)
+   * `PG_PORT`: PostgreSQL connection port
+   * `PG_DB`: PostgreSQL database name
+   * `PG_USER`: PostgreSQL connection user
+   * `PG_PASSWORD`: PostgreSQL connection password
+   * `YOUTUBE_API_KEY`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
+   * `YOUTUBE_API_APP_NAME`: your Google Cloud application name
 
 ### Run
 
@@ -81,10 +91,3 @@ docker-compose up -d --build
 > Interface access URL: http://localhost:2026
 >
 > API access URL: http://localhost:2026/api/ (don't forget the `/` at the end)
->
-> Database access:
-> * Host: `localhost`
-> * Port: `5432`
-> * User: `root`
-> * Password: `root`
-> * Database: `amusix`
