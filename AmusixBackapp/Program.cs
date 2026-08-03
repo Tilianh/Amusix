@@ -16,8 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Logs
-builder.Services.AddLogging(x =>
-    x.AddJsonConsole(y => y.JsonWriterOptions = new JsonWriterOptions { Indented = true }));
+builder.Logging.ClearProviders();
+builder.Logging.AddJsonConsole(x =>
+{
+    x.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
+    x.JsonWriterOptions = new JsonWriterOptions { Indented = false };
+});
 
 // Rate limiter
 builder.Services.AddRateLimiter(options =>
