@@ -43,8 +43,8 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
-          SCRIPT_BEFORE_REQUIRED: true
-          SCRIPT_BEFORE: |
+          SCRIPT_AFTER_REQUIRED: true
+          SCRIPT_AFTER: |
             if ! docker network ls | grep amusix-network; then
               docker network create amusix-network
               docker network connect amusix-network ${{ secrets.PGDB_CONTAINER }}
@@ -60,17 +60,12 @@ jobs:
                 rm -rf ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/
                 docker exec ${{ secrets.PGDB_CONTAINER }} rm -rf pgdb_backups
               fi
+              git config user.name github-actions[bot]
+              git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+              git pull
             else
               mkdir -p ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}/..
-            fi
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          SCRIPT_AFTER_REQUIRED: true
-          SCRIPT_AFTER: |
-            if ls ${{ secrets.SSH_DEPLOY_DIR_PATH }}; then
-              git pull
-            else
               git clone ${{ github.server_url }}/${{ github.repository }}
               rm -fr ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
