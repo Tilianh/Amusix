@@ -37,8 +37,10 @@ Shared
 3. At the project's root, create a copy of the `appsettings.json` file as `appsettings.Development.json`
 
 4. Specify a value for each of the following fields in the created file:
-   * `ConnectionStrings:Default`: connection string to connect to your PostgreSQL instance
-   * `AllowedOrigins`: origins allowed to send request to the API → specify `http://localhost:4200`
+   * `ConnectionStrings:Default`: PostgreSQL database connection string
+     * Specify `Server=<host>;Port=<port>;Database=<database>;User ID=<user>;Password=<password>`
+     * Replace `<host>`, `<port>`, `<database>`, `<user>` and `<password>` with the corresponding connection data
+   * `AllowedOrigins`: origins allowed to send request to the API (ex: `http://localhost:4200`)
    * `SeedDatabase`: if set to `true`, the database will be filled with fake generated data (on startup)
    * `YouTubeApi:ApiKey`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
    * `YouTubeApi:ApplicationName`: your Google Cloud application name

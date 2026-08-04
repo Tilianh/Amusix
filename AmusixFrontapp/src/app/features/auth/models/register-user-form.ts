@@ -1,6 +1,6 @@
 export class RegisterUserForm {
   public userName = '';
-  public displayName = '';
+  public userDisplayName = '';
   public password = '';
   public confirmPassword = '';
 }
