@@ -54,7 +54,7 @@ jobs:
               if docker container ls | grep ${{ secrets.PGDB_CONTAINER }}; then
                 mkdir -p ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
                 docker exec ${{ secrets.PGDB_CONTAINER }} mkdir -p pgdb_backups
-                docker exec ${{ secrets.PGDB_CONTAINER }} pg_dump --format c --file "pgdb_backups/amusix_pgdb_backup_$(date +'%m%d%y%H%M%S').backup" ${{ secrets.PG_DB }}
+                docker exec ${{ secrets.PGDB_CONTAINER }} pg_dump -Fp -f "pgdb_backups/amusix_pgdb_backup_$(date +'%m%d%y%H%M%S').sql" ${{ secrets.PG_DB }}
                 docker cp ${{ secrets.PGDB_CONTAINER }}:pgdb_backups/ ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
                 mv ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/* ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
                 rm -rf ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/
