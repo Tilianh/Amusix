@@ -1,6 +1,6 @@
 {
   "name": "amusix-frontapp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "build": "ng build",
     "compodoc:generate": "npx compodoc -p tsconfig.doc.json"
