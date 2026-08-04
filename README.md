@@ -34,10 +34,14 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
     *  `/` → redirects to the frontend
     *  `/api/` → redirects to the API
 * The application's backend manages requests with the database and the YouTube API (used to retrieve song metadata)
+* Metrics and logs about the Docker architecture can be visualized via a [Grafana](https://grafana.com/) monitoring application
+
+All containerized components are part of a dedicated `amusix-network` Docker network, so they can communicate with other containers outside the application's architecture
+(to connect to the PostgreSQL database for instance, which is also hosted within a Docker container on the server).
 
 > [!NOTE]
 > Other applications were already hosted on the server and served using Apache before Amusix's deployment.
-> That's why we use an Apache proxy rather than directly redirecting user requests to the Nginx proxy.
+> That's why an Apache proxy is used rather than directly redirecting user requests to the Nginx proxy.
 > The Apache proxy also manages HTTPS redirections to ensure the application's pages are SSL certified.
 
 ### Project structure
@@ -45,7 +49,6 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
 * [`AmusixBackapp/`](AmusixBackapp): backend application
 * [`AmusixFrontapp/`](AmusixFrontapp): frontend application
 * `docs/`: repo documentation
-* `proxy/`: proxy (for containerization)
 * [`tests/`](tests): automatized tests (for CI)
 
 ## Startup (with Docker)
@@ -57,15 +60,38 @@ Wanna know how to use Amusix? Check the repo's [user guide](docs/USER_GUIDE.md).
 
 1. Install [Docker](https://www.docker.com) / [Docker Desktop](https://www.docker.com/products/docker-desktop) (if necessary)
 
-2. Create a `.env` file at the repo's root with the following content:
+2. Create a Docker network for the application by running the following command in a terminal:
+    ```shell
+    docker network create amusix-network
+    ```
+
+3. Create a `.env` file at the repo's root with the following content:
     ``` apacheconf
+    PG_HOST=
+    PG_PORT=
+    PG_DB=
+    PG_USER=
+    PG_PASSWORD=
     YOUTUBE_API_KEY=
     YOUTUBE_API_APP_NAME=
     ```
 
-3. Specify a value for each fields in the created file:
-    * `YOUTUBE_API_KEY`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
-    * `YOUTUBE_API_APP_NAME`: your Google Cloud application name
+4. Specify a value for each fields in the created file:
+   * `PG_HOST`: PostgreSQL connection host
+     * If the database is locally hosted, specify `host.docker.internal`
+     * If the database is hosted within a Docker container, specify the name of the container
+   * `PG_PORT`: PostgreSQL connection port
+   * `PG_DB`: PostgreSQL database name
+   * `PG_USER`: PostgreSQL connection user
+   * `PG_PASSWORD`: PostgreSQL connection password
+   * `YOUTUBE_API_KEY`: your Google Cloud [API key](https://docs.cloud.google.com/docs/authentication/api-keys)
+   * `YOUTUBE_API_APP_NAME`: your Google Cloud application name
+
+5. If the database is hosted within a Docker container, connect the database container to the application's network by running the following command in a terminal:
+   ```shell
+   docker newtork connect amusix-newtork <container>
+   ```
+   Replace `container` with the name of the container hosting the database
 
 ### Run
 
@@ -81,10 +107,3 @@ docker-compose up -d --build
 > Interface access URL: http://localhost:2026
 >
 > API access URL: http://localhost:2026/api/ (don't forget the `/` at the end)
->
-> Database access:
-> * Host: `localhost`
-> * Port: `5432`
-> * User: `root`
-> * Password: `root`
-> * Database: `amusix`

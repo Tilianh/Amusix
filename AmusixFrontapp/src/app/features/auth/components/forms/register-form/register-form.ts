@@ -25,7 +25,7 @@ export class RegisterForm extends AmxComponentBase {
     required(x.userName);
     pattern(x.userName, /^(?=.*[a-z])(?=.*[0-9\-_]?)(\S){5,256}$/);
     maxLength(x.userName, 100);
-    maxLength(x.displayName, 100);
+    maxLength(x.userDisplayName, 100);
     pattern(x.password, /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\s:])(\S){6,100}$/);
     maxLength(x.password, 100);
     validate(x.confirmPassword, (y) => {

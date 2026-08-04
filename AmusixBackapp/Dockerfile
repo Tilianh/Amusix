@@ -2,6 +2,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine@sha256:d8ee39817ca03a3757288e83c37
 WORKDIR /App
 
 ARG APP_BASE_URL
+ARG PG_HOST
+ARG PG_PORT
+ARG PG_DB
+ARG PG_USER
+ARG PG_PASSWORD
 ARG YOUTUBE_API_KEY
 ARG YOUTUBE_API_APP_NAME
 
@@ -14,9 +19,10 @@ RUN apk add jq
 # Set configuration (in temp file)
 RUN jq \
     --arg appBaseUrl "$APP_BASE_URL" \
+    --arg dbConnectionString "Server=$PG_HOST;Port=$PG_PORT;Database=$PG_DB;User ID=$PG_USER;Password=$PG_PASSWORD" \
     --arg youtubeApiKey "$YOUTUBE_API_KEY" \
     --arg youtubeApiAppName "$YOUTUBE_API_APP_NAME" \
-    '.AllowedOrigins = $appBaseUrl | .YouTubeApi.ApiKey = $youtubeApiKey | .YouTubeApi.ApplicationName = $youtubeApiAppName' \
+    '.AllowedOrigins = $appBaseUrl | .ConnectionStrings.Default = $dbConnectionString | .YouTubeApi.ApiKey = $youtubeApiKey | .YouTubeApi.ApplicationName = $youtubeApiAppName' \
     appsettings.Production.json > temp-config
 
 # Update configuration
