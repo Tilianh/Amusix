@@ -45,37 +45,53 @@ jobs:
           REMOTE_USER: ${{ secrets.SSH_USER }}
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
+            if ! docker network ls | grep amusix-network; then
+              docker network create amusix-network
+              docker network connect amusix-network ${{ secrets.PGDB_CONTAINER }}
+            fi
             if ls ${{ secrets.SSH_DEPLOY_DIR_PATH }}; then
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
-              if docker container ls | grep amx-database; then
+              if docker container ls | grep ${{ secrets.PGDB_CONTAINER }}; then
                 mkdir -p ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
-                docker exec amx-database mkdir -p pgdb_backups
-                docker exec amx-database pg_dump --format c --file "pgdb_backups/amusix_pgdb_backup_$(date +'%m%d%y%H%M%S').backup" amusix
-                docker cp amx-database:pgdb_backups/ ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
+                docker exec ${{ secrets.PGDB_CONTAINER }} mkdir -p pgdb_backups
+                docker exec ${{ secrets.PGDB_CONTAINER }} pg_dump --format c --file "pgdb_backups/amusix_pgdb_backup_$(date +'%m%d%y%H%M%S').backup" ${{ secrets.PG_DB }}
+                docker cp ${{ secrets.PGDB_CONTAINER }}:pgdb_backups/ ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
                 mv ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/* ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}
                 rm -rf ${{ secrets.SSH_DB_BACKUPS_DIR_PATH }}/pgdb_backups/
-                docker exec amx-database rm -rf pgdb_backups
+                docker exec ${{ secrets.PGDB_CONTAINER }} rm -rf pgdb_backups
               fi
-              git pull
             else
               mkdir -p ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}/..
+            fi
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          SCRIPT_AFTER_REQUIRED: true
+          SCRIPT_AFTER: |
+            if ls ${{ secrets.SSH_DEPLOY_DIR_PATH }}; then
+              git pull
+            else
               git clone ${{ github.server_url }}/${{ github.repository }}
               rm -fr ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               mv ${{ github.event.repository.name }} ${{ secrets.SSH_DEPLOY_DIR_PATH }}
               cd ${{ secrets.SSH_DEPLOY_DIR_PATH }}
-              echo "APP_BASE_URL=${{ vars.APP_BASE_URL }}" > .env
-              echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
-              echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
             fi
-            docker compose up -d --build   
+            echo "APP_BASE_URL=${{ vars.APP_BASE_URL }}" > .env
+            echo "PG_HOST=${{ secrets.PG_HOST }}" >> .env
+            echo "PG_PORT=${{ secrets.PG_PORT }}" >> .env
+            echo "PG_DB=${{ secrets.PG_DB }}" >> .env
+            echo "PG_USER=${{ secrets.PG_USER }}" >> .env
+            echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
+            echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
+            echo "YOUTUBE_API_APP_NAME=${{ secrets.YOUTUBE_API_APP_NAME }}" >> .env
+            docker compose up -d --build
 
   create-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: AmusixFrontapp/package.json
       - name: ▶ Extract release name
