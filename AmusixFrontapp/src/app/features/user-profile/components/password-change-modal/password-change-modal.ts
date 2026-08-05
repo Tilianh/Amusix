@@ -74,7 +74,6 @@ export class PasswordChangeModal extends AmxComponentBase {
         this.showAlert(AlertType.SUCCESS, 'Password updated, you can now log in again', 10);
       } catch (e) {
         let errorMsg;
-        console.log(e);
         switch ((e as HttpErrorResponse).status) {
           case 403:
             errorMsg = 'Either the current or the new password is not valid';

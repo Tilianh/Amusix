@@ -33,12 +33,18 @@ public class PaginatedList<T>
         token ??= "1";
         if (int.TryParse(token, out var pageNumber))
         {
+            var pageItems = _items.Skip((pageNumber - 1) * AppConstants.DataPageSize)
+                .Take(AppConstants.DataPageSize)
+                .ToList();
+
             return new PaginatedListPage<T>(
-                _items.Skip((pageNumber - 1) * AppConstants.DataPageSize).Take(AppConstants.DataPageSize).ToList(),
+                pageItems,
                 TotalItemCount,
                 token,
                 pageNumber > 1 ? $"{pageNumber - 1}" : null,
-                Math.Min(pageNumber + 1, TotalItemCount).ToString());
+                (pageNumber - 1) * AppConstants.DataPageSize + pageItems.Count < TotalItemCount
+                    ? $"{pageNumber + 1}"
+                    : null);
         }
         throw new FormatException("Invalid page token");
     }

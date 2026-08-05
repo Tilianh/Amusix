@@ -8,6 +8,7 @@ import { SearchResultSongItem } from '../search-result-song-item/search-result-s
 import { AddPlaylistSongModal } from '../../../playlists/components/add-playlist-song-modal/add-playlist-song-modal';
 import { SearchResultSong } from '../../models/search-result-song';
 import { SongStatus } from '../../../../shared/enums/song-status';
+import { Modal } from '../../../../shared/components/modal/modal';
 
 @Component({
   selector: 'app-song-search-results',
@@ -15,7 +16,8 @@ import { SongStatus } from '../../../../shared/enums/song-status';
     DynamicPaginatedList,
     RouterLink,
     SearchResultSongItem,
-    AddPlaylistSongModal
+    AddPlaylistSongModal,
+    Modal
   ],
   templateUrl: './song-search-results.html',
   styleUrl: './song-search-results.scss'

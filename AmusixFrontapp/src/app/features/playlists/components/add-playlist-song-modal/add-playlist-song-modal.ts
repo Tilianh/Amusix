@@ -44,8 +44,8 @@ export class AddPlaylistSongModal extends AmxComponentBase {
     this.paginatedPlaylists().items.filter(x => x.id != this.currentPlaylistId));
   protected showPlaylistOptions = signal(false);
   protected selectedPlaylist = signal<PlaylistInfo | undefined>(undefined);
-  protected areAllPlaylistsLoaded = computed(() =>
-    this.paginatedPlaylists().items.length == this.paginatedPlaylists().totalItemCount);
+  protected canLoadMorePlaylists = computed(() => !!this.paginatedPlaylists().nextPageToken);
+  protected isLoadingMorePlaylists = signal(false);
 
   // New playlist
 
@@ -90,12 +90,14 @@ export class AddPlaylistSongModal extends AmxComponentBase {
   //region existing playlists
 
   protected async loadMorePlaylists() {
-    if (!this.areAllPlaylistsLoaded()) {
+    if (this.canLoadMorePlaylists()) {
+      this.isLoadingMorePlaylists.set(true);
       const paginatedPlaylists = (await this.playlistService.getCurrentUserPlaylistsAsync(this.paginatedPlaylists().nextPageToken))!;
       this.paginatedPlaylists.set({
         ...paginatedPlaylists,
         items: this.paginatedPlaylists().items.concat(paginatedPlaylists?.items)
       });
+      this.isLoadingMorePlaylists.set(false);
     }
   }
 
