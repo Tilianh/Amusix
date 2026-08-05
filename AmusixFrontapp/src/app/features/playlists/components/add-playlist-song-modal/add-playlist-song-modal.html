@@ -66,9 +66,13 @@
                                       [selected]="selectedPlaylist()?.id == playlist.id"
                                       [id]="`playlistOption${playlist.id}`"/>
           }
-          @if (!areAllPlaylistsLoaded()) {
-            <div (click)="loadMorePlaylists()"
-                 class="text-primary text-center text-decoration-underline py-2">Load more
+          @if (canLoadMorePlaylists()) {
+            <div class="d-flex justify-content-center py-2 text-primary">
+              @if (isLoadingMorePlaylists()) {
+                <div class="spinner-border"></div>
+              } @else {
+                <div (click)="loadMorePlaylists()" class="text-decoration-underline cursor-pointer">Load more</div>
+              }
             </div>
           }
         </div>

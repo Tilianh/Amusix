@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewChecked,
   Component,
   computed,
   ElementRef,
@@ -25,7 +25,7 @@ import { NgTemplateOutlet } from '@angular/common';
   templateUrl: './dynamic-paginated-list.html',
   styleUrl: './dynamic-paginated-list.scss'
 })
-export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit, AfterViewInit {
+export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit, AfterViewChecked {
   //region parameters
 
   /** Function to call to retrieve a paginated list of the items to list. */
@@ -58,6 +58,7 @@ export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit,
   // Component
 
   protected isLoading = signal(true);
+  protected isLoadingMoreResults = signal(false);
   protected isBigScreen = signal(false);
   protected showFadeInGradient = signal(false);
   protected itemContainer = viewChild<ElementRef>('itemContainer');
@@ -65,7 +66,7 @@ export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit,
   // Items
 
   protected paginatedItems = signal(new PaginatedListPage<T>());
-  protected areAllItemsLoaded = computed(() => this.paginatedItems().items.length == this.paginatedItems().totalItemCount);
+  protected canLoadMoreItems = computed(() => !!this.paginatedItems().nextPageToken);
 
   //endregion
 
@@ -76,24 +77,28 @@ export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit,
     this.isLoading.set(false);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewChecked() {
     this.setIsBigScreen();
   }
 
   protected async loadMoreItems() {
-    if (!this.areAllItemsLoaded()) {
+    if (this.canLoadMoreItems()) {
+      this.isLoadingMoreResults.set(true);
       const paginatedItems = (await this.itemSource().call(this.itemSource(), this.paginatedItems().nextPageToken))!;
       this.paginatedItems.set({
         ...paginatedItems,
         items: this.paginatedItems().items.concat(paginatedItems.items)
       });
+      this.isLoadingMoreResults.set(false);
     }
     this.setIsBigScreen();
   }
 
   protected async onScrollEnd() {
-    const element = (this.itemContainer()?.nativeElement as HTMLElement);
-    if (element.scrollTop + element.offsetHeight >= element.scrollHeight - 25) await this.loadMoreItems();
+    if (!this.isLoadingMoreResults()) {
+      const element = (this.itemContainer()?.nativeElement as HTMLElement);
+      if (element.scrollTop + element.offsetHeight >= element.scrollHeight - 25) await this.loadMoreItems();
+    }
   }
 
   protected onScroll() {
@@ -103,13 +108,7 @@ export class DynamicPaginatedList<T> extends AmxComponentBase implements OnInit,
   @HostListener('window:resize')
   protected setIsBigScreen() {
     const element = (this.itemContainer()?.nativeElement as HTMLElement);
-    if (element) {
-      this.isBigScreen.set(
-        !this.areAllItemsLoaded() &&
-        element.scrollTop == 0 &&
-        element.offsetHeight == element.scrollHeight
-      );
-    }
+    if (element) this.isBigScreen.set(element.scrollTop == 0 && element.offsetHeight == element.scrollHeight);
   }
 
   //endregion
