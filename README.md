@@ -48,7 +48,7 @@ All containerized components are part of a dedicated `amusix-network` Docker net
 
 * [`AmusixBackapp/`](AmusixBackapp): backend application
 * [`AmusixFrontapp/`](AmusixFrontapp): frontend application
-* `docs/`: repo documentation
+* [`docs/`](docs): repo documentation
 * [`tests/`](tests): automatized tests (for CI)
 
 ## Startup (with Docker)
@@ -89,7 +89,7 @@ All containerized components are part of a dedicated `amusix-network` Docker net
 
 5. If the database is hosted within a Docker container, connect the database container to the application's network by running the following command in a terminal:
    ```shell
-   docker newtork connect amusix-newtork <container>
+   docker network connect amusix-newtork <container>
    ```
    Replace `container` with the name of the container hosting the database
 

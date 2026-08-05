@@ -46,7 +46,6 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
 
         // Search songs on YouTube API
         var searchResult = (await searchRequest.ExecuteAsync())!;
-        var totalResultCount = searchResult.PageInfo.TotalResults ?? 0;
 
         var videoRequest = ytbApiService.Videos.List("snippet,contentDetails");
         videoRequest.Id = searchResult.Items.Select(x => x.Id.VideoId).ToArray();
@@ -72,10 +71,7 @@ public class SongController(YouTubeApiService ytbApiService) : AmxControllerBase
         return JsonResult(StatusCodes.Status200OK,
             new PaginatedListPage<SearchResultSongVm>(
                 songs,
-                pageToken == null
-                    ? // Total result count = first page size if no next page token provided
-                    searchResult.NextPageToken != null ? totalResultCount : songs.Count
-                    : totalResultCount,
+                searchResult.PageInfo.TotalResults ?? 0,
                 pageToken,
                 searchResult.PrevPageToken,
                 searchResult.NextPageToken));
